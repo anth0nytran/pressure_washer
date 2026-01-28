@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, ShieldCheck, Star, Menu, X, Droplets, Zap, Check, ArrowRight } from 'lucide-react';
+import { Phone, ShieldCheck, Star, Menu, X, Droplets, Zap, Check, ArrowRight, ClipboardList, Calendar, Clock, Leaf, CloudRain, Home, Umbrella, Layers, PanelTop, Trash2 } from 'lucide-react';
 import type { BusinessConfig } from '@/lib/demoDefaults';
 import { LeadCaptureModal } from './components/LeadCaptureModal';
 import { ComparisonSlider } from './components/ComparisonSlider';
@@ -23,7 +23,7 @@ const staggerSoft = {
 
 export function TemplateHome({ config }: { config: BusinessConfig }) {
   const accent = config.accent.hex;
-  const accentRed = '#ef4444'; // Subtle red complement
+  const accentRed = '#b91c1c'; // More professional brick red
   const t = config.theme.colors; // Theme colors shorthand
   const isDark = config.theme.isDark;
   const cleanPhone = useMemo(() => config.phone.replace(/\D/g, ''), [config.phone]);
@@ -141,22 +141,20 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
 
   return (
     <div className="relative" style={{ backgroundColor: t.pageBg, color: t.textPrimary }}>
-      {/* Sticky Navigation - Industrial Style */}
       <nav
-        className="sticky top-0 z-50 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 shadow-xl border-b-2"
         style={{
-          backgroundColor: scrolled ? '#000000' : 'rgba(0,0,0,0.95)',
-          borderBottom: `2px solid ${scrolled ? accent : 'transparent'}`,
-          backdropFilter: 'blur(12px)',
+          backgroundColor: '#0a0a0a',
+          borderColor: accent
         }}
       >
-        <div className={`${shellClass} flex items-center justify-between py-3`}>
+        <div className={`${shellClass} flex items-center justify-between py-2`}>
           {/* Logo */}
-          <a href="#" className="flex items-center gap-3">
+          <a href="#" className="flex items-center gap-3 group">
             <img
               src="/logo-full.svg"
               alt={config.businessName}
-              className="h-14 w-auto"
+              className="h-14 w-auto object-contain drop-shadow-md transition-transform group-hover:scale-105"
             />
           </a>
 
@@ -231,7 +229,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         HERO SECTION - INDUSTRIAL CLEAN DESIGN
         ----------------------------------------------------
       */}
-      <section className="relative pt-12 pb-20 lg:pt-24 lg:pb-32 overflow-hidden">
+      <section className="relative pt-24 pb-20 lg:pt-32 lg:pb-32 overflow-hidden">
 
         {/* 1. Background Image - Positioned up to show action */}
         <div
@@ -239,7 +237,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
           style={{
             backgroundImage: 'url(/hero-background.png)',
             backgroundSize: 'cover',
-            backgroundPosition: 'center 25%',
+            backgroundPosition: 'center 60%',
             backgroundRepeat: 'no-repeat'
           }}
         />
@@ -345,7 +343,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             className="relative"
           >
             <div
-              className="rounded-lg p-7 border-4"
+              className="rounded-lg p-7 border-2"
               style={{
                 backgroundColor: '#ffffff',
                 borderColor: accent,
@@ -356,7 +354,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
               <div className="mb-6">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="text-2xl font-black text-slate-900 mb-1 tracking-tight leading-none">
+                    <h3 className="text-2xl font-bold text-slate-900 mb-1 tracking-tight leading-none">
                       Get Your<br />Free Quote
                     </h3>
                     <div className="flex items-center gap-1 mt-2">
@@ -515,43 +513,58 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `linear-gradient(90deg, transparent 0%, ${accent} 50%, transparent 100%)` }} />
 
         <div className={`${shellClass} relative z-10`}>
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:gap-8">
             {/* Stat 1 */}
-            <div className="group">
-              <div className="relative p-6 rounded-lg border-2 transition-all hover:scale-105" style={{ borderColor: `${accent}40`, backgroundColor: 'rgba(255,255,255,0.03)' }}>
-                <div className="absolute top-0 left-0 w-2 h-full rounded-l-lg" style={{ backgroundColor: accent }} />
-                <div className="text-5xl font-black text-white mb-2 leading-none">{reviewCount}<span className="text-2xl">+</span></div>
-                <div className="text-xs font-black uppercase tracking-[0.15em] text-gray-400">Jobs Completed</div>
+            <div className="group h-full">
+              <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm h-full flex flex-col justify-center transition-all hover:bg-white/10 hover:border-white/20">
+                <div className="flex items-center gap-2 mb-2 text-white/40 group-hover:text-white/60 transition-colors">
+                  <ClipboardList className="w-4 h-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Completed</span>
+                </div>
+                <div className="text-4xl lg:text-5xl font-black text-white leading-none tracking-tight">{reviewCount}<span className="text-2xl text-white/40">+</span></div>
+                <div className="text-xs font-medium text-white/60 mt-1">Projects Delivered</div>
               </div>
             </div>
 
             {/* Stat 2 */}
-            <div className="group">
-              <div className="relative p-6 rounded-lg border-2 transition-all hover:scale-105" style={{ borderColor: `${accent}40`, backgroundColor: 'rgba(255,255,255,0.03)' }}>
-                <div className="absolute top-0 left-0 w-2 h-full rounded-l-lg" style={{ backgroundColor: accent }} />
-                <div className="text-5xl font-black text-white mb-2 leading-none">{years}<span className="text-2xl">+</span></div>
-                <div className="text-xs font-black uppercase tracking-[0.15em] text-gray-400">Years in {config.city}</div>
+            <div className="group h-full">
+              <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm h-full flex flex-col justify-center transition-all hover:bg-white/10 hover:border-white/20">
+                <div className="flex items-center gap-2 mb-2 text-white/40 group-hover:text-white/60 transition-colors">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Experience</span>
+                </div>
+                <div className="text-4xl lg:text-5xl font-black text-white leading-none tracking-tight">{years}<span className="text-2xl text-white/40">+</span></div>
+                <div className="text-xs font-medium text-white/60 mt-1">Years in Business</div>
               </div>
             </div>
 
             {/* Stat 3 */}
-            <div className="group">
-              <div className="relative p-6 rounded-lg border-2 transition-all hover:scale-105" style={{ borderColor: accentRed, backgroundColor: `${accentRed}10` }}>
-                <div className="absolute top-0 left-0 w-2 h-full rounded-l-lg" style={{ backgroundColor: accentRed }} />
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-5xl font-black leading-none" style={{ color: accentRed }}>{ratingText}</span>
-                  <Star className="w-6 h-6 mb-1" style={{ color: '#FFA500', fill: '#FFA500' }} />
+            <div className="group h-full">
+              <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm h-full flex flex-col justify-center transition-all hover:bg-white/10 hover:border-white/20">
+                <div className="flex items-center gap-2 mb-2 text-white/40 group-hover:text-white/60 transition-colors">
+                  <div className="flex gap-0.5">
+                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
+                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
+                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
+                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
+                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Rating</span>
                 </div>
-                <div className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accentRed }}>Google Rating</div>
+                <div className="text-4xl lg:text-5xl font-black text-white leading-none tracking-tight">{ratingText}</div>
+                <div className="text-xs font-medium text-white/60 mt-1">Google Reviews</div>
               </div>
             </div>
 
             {/* Stat 4 */}
-            <div className="group">
-              <div className="relative p-6 rounded-lg border-2 transition-all hover:scale-105" style={{ borderColor: accent, backgroundColor: `${accent}10` }}>
-                <div className="absolute top-0 left-0 w-2 h-full rounded-l-lg" style={{ backgroundColor: accent }} />
-                <div className="text-5xl font-black leading-none mb-2" style={{ color: accent }}>2<span className="text-2xl">hr</span></div>
-                <div className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accent }}>Response Time</div>
+            <div className="group h-full">
+              <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm h-full flex flex-col justify-center transition-all hover:bg-white/10 hover:border-white/20">
+                <div className="flex items-center gap-2 mb-2 text-white/40 group-hover:text-white/60 transition-colors">
+                  <Clock className="w-4 h-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Response</span>
+                </div>
+                <div className="text-4xl lg:text-5xl font-black text-white leading-none tracking-tight">2<span className="text-2xl text-white/40">hr</span></div>
+                <div className="text-xs font-medium text-white/60 mt-1">Avg. Response Time</div>
               </div>
             </div>
           </div>
@@ -569,7 +582,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
           style={{
             backgroundImage: 'url(/why-us-background.png)',
             backgroundAttachment: 'fixed',
-            backgroundPosition: 'center',
+            backgroundPosition: 'center 70%',
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat'
           }}
@@ -594,50 +607,84 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
                   Why {config.city} Homeowners Trust Made New Pressure Washing
                 </h2>
                 <div className="mt-10 space-y-4">
-                  {benefits.map((benefit, i) => (
-                    <div
-                      key={benefit}
-                      className="flex items-start gap-4 p-5 rounded border-l-4"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderLeftColor: i === 2 ? accentRed : accent }}
-                    >
-                      <span
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded text-lg font-black flex-shrink-0"
-                        style={{ backgroundColor: i === 2 ? accentRed : accent, color: '#000' }}
-                      >
-                        {i + 1}
-                      </span>
-                      <span className="text-base font-bold text-white leading-relaxed pt-1">{benefit}</span>
+                  <div className="mt-10 space-y-6">
+                    {/* Benefit 1 */}
+                    <div className="flex items-start gap-4 p-5 rounded-lg border-l-4 transition-all hover:translate-x-2" style={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: accent }}>
+                      <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: `${accent}20` }}>
+                        <Leaf className="w-6 h-6" style={{ color: accent }} />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-black text-white mb-1">
+                          Plant & Pet Safe Promise
+                        </h4>
+                        <p className="text-sm font-medium text-gray-400 leading-relaxed">
+                          We treat your home like our own. We use careful pre-soaking and plant-protection protocols so your landscaping stays lush and your pets stay safe.
+                        </p>
+                      </div>
                     </div>
-                  ))}
+
+                    {/* Benefit 2 */}
+                    <div className="flex items-start gap-4 p-5 rounded-lg border-l-4 transition-all hover:translate-x-2" style={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: accent }}>
+                      <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: `${accent}20` }}>
+                        <ShieldCheck className="w-6 h-6" style={{ color: accent }} />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-black text-white mb-1">
+                          HOA Compliance Guarantee
+                        </h4>
+                        <p className="text-sm font-medium text-gray-400 leading-relaxed">
+                          Got a nasty letter? We know the specific cleanliness standards for {config.city} HOAs. We'll get your siding and driveway passing inspection, guaranteed.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Benefit 3 */}
+                    <div className="flex items-start gap-4 p-5 rounded-lg border-l-4 transition-all hover:translate-x-2" style={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: accent }}>
+                      <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: `${accent}20` }}>
+                        <CloudRain className="w-6 h-6" style={{ color: accent }} />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-black text-white mb-1">
+                          7-Day Rain Guarantee
+                        </h4>
+                        <p className="text-sm font-medium text-gray-400 leading-relaxed">
+                          If a storm messes up your clean windows or driveway within 7 days of our service, we'll come back and touch it up for free. No questions asked.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div
-                className="rounded-lg p-8 shadow-2xl"
-                style={{ backgroundColor: promiseBg, border: `3px solid ${accent}` }}
+                className="rounded-lg p-8 shadow-2xl relative overflow-hidden"
+                style={{ backgroundColor: '#0f172a', border: `2px solid ${accent}` }}
               >
-                <div className="text-sm font-black uppercase tracking-[0.2em] mb-8" style={{ color: accent }}>
-                  Service Promise
+                {/* Background accent */}
+                <div className="absolute top-0 right-0 p-4 opacity-5">
+                  <ShieldCheck className="w-32 h-32" style={{ color: accent }} />
                 </div>
-                <div className="space-y-6">
-                  {[
-                    { label: 'Response time', value: 'Fast response', highlight: true },
-                    { label: 'Free estimate', value: 'Call or text' },
-                    { label: 'Walk-through', value: 'After every job' },
-                  ].map((item, i, arr) => (
-                    <div
-                      key={item.label}
-                      className="flex items-center justify-between pb-5"
-                      style={{ borderBottom: i < arr.length - 1 ? `2px solid ${promiseDivider}` : 'none' }}
-                    >
-                      <span className="text-base font-bold" style={{ color: t.textPrimary }}>{item.label}</span>
-                      <span
-                        className="text-lg font-black"
-                        style={{ color: item.highlight ? accent : t.textPrimary }}
-                      >
-                        {item.value}
-                      </span>
+
+                <div className="relative z-10">
+                  <h3 className="text-xl font-black text-white mb-4">
+                    A Note from Blake
+                  </h3>
+                  <p className="text-base text-gray-300 mb-6 leading-relaxed">
+                    "I'm not just a business owner; I'm your neighbor here in {config.city}. When you call Made New, you don't get a franchise call center. You get me. I personally ensure every job is done right, every time."
+                  </p>
+
+                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-800">
+                    <div>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Owner & Operator</p>
+                      <p className="text-3xl font-serif italic text-white" style={{ fontFamily: 'Georgia, serif' }}>Blake</p>
                     </div>
-                  ))}
+                    <a
+                      href={`tel:${cleanPhone}`}
+                      className="flex items-center gap-2 px-5 py-3 rounded-lg font-bold text-sm bg-white text-slate-900 hover:bg-gray-100 transition-colors"
+                    >
+                      <Phone className="w-4 h-4" />
+                      Call Me Direct
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -671,44 +718,56 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             viewport={{ once: true, amount: 0.3 }}
             className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
           >
-            {services.map((service, i) => (
-              <motion.div
-                key={service}
-                variants={fadeInSoft}
-                className="group relative overflow-hidden rounded-lg transition-all hover:scale-105 cursor-pointer border-2"
-                style={{ backgroundColor: t.cardBg, borderColor: t.border }}
-                onClick={() => setLeadOpen(true)}
-              >
-                {/* Hover border effect */}
-                <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all rounded-lg" style={{ borderColor: i === 1 ? accentRed : accent }} />
+            {services.map((service, i) => {
+              const Icon =
+                service.icon === 'Zap' ? Zap :
+                  service.icon === 'Droplets' ? Droplets :
+                    service.icon === 'Home' ? Home :
+                      service.icon === 'Umbrella' ? Umbrella :
+                        service.icon === 'Layers' ? Layers :
+                          service.icon === 'PanelTop' ? PanelTop :
+                            service.icon === 'Trash2' ? Trash2 : Zap;
 
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div
-                      className="w-12 h-12 rounded-lg flex items-center justify-center text-lg font-black text-white"
-                      style={{ backgroundColor: i === 1 ? accentRed : accent }}
-                    >
-                      {i + 1}
+              return (
+                <motion.div
+                  key={service.id}
+                  variants={fadeInSoft}
+                  className="group relative overflow-hidden rounded-xl transition-all hover:-translate-y-1 hover:shadow-xl border cursor-pointer"
+                  style={{ backgroundColor: t.cardBg, borderColor: t.border }}
+                  onClick={() => setLeadOpen(true)}
+                >
+                  {/* Hover border effect */}
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" style={{ color: accent }} />
+
+                  <div className="p-8">
+                    <div className="flex items-start justify-between mb-6">
+                      <div
+                        className="w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110"
+                        style={{ backgroundColor: i % 2 === 0 ? accent : accentRed }}
+                      >
+                        <Icon className="w-7 h-7" />
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-[10px] font-black uppercase tracking-widest opacity-40">0{i + 1}</span>
+                        <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" style={{ color: accent }} />
+                      </div>
                     </div>
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" style={{ color: i === 1 ? accentRed : accent }} />
+
+                    <h3 className="text-xl font-black uppercase mb-3 leading-tight" style={{ color: t.textPrimary }}>
+                      {service.title}
+                    </h3>
+
+                    <p className="text-sm font-medium leading-relaxed mb-6" style={{ color: t.textSecondary }}>
+                      {service.description}
+                    </p>
+
+                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wide transition-colors group-hover:underline decoration-2 underline-offset-4" style={{ color: i % 2 === 0 ? accent : accentRed }}>
+                      <span>Get Quote</span>
+                    </div>
                   </div>
-
-                  <h3 className="text-lg font-black uppercase mb-2 leading-tight" style={{ color: t.textPrimary }}>
-                    {service}
-                  </h3>
-
-                  <p className="text-xs font-bold mb-4" style={{ color: t.textMuted }}>
-                    Free estimate • Same-day • {config.city}
-                  </p>
-
-                  <div className="pt-4 border-t-2" style={{ borderColor: t.border }}>
-                    <span className="text-xs font-black uppercase tracking-wide inline-flex items-center gap-1" style={{ color: i === 1 ? accentRed : accent }}>
-                      Request Quote
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              )
+            })}
           </motion.div>
         </div>
       </section>
@@ -717,7 +776,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
       <section className="py-16 relative overflow-hidden" style={{ borderTop: `4px solid ${accent}`, backgroundColor: t.surfaceBg }}>
         {/* Subtle grid pattern for tech feel */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `linear-gradient(${t.border} 1px, transparent 1px), linear-gradient(90deg, ${t.border} 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
-        
+
         <div className={shellClass + ' relative z-10'}>
           <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-2xl">
@@ -744,56 +803,56 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
               className="relative overflow-hidden rounded-lg border-2 group hover:border-transparent transition-colors duration-300"
               style={{ borderColor: t.border }}
             >
-               {/* Parallax Background */}
-               <div
-                 className="absolute inset-0"
-                 style={{
-                   backgroundImage: 'url(/pressure_washing.png)',
-                   backgroundAttachment: 'fixed',
-                   backgroundPosition: 'center',
-                   backgroundSize: '130%',
-                   backgroundRepeat: 'no-repeat'
-                 }}
-               />
-               {/* Dark overlay for text readability */}
-               <div
-                 className="absolute inset-0"
-                 style={{
-                   background: 'linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.80) 100%)'
-                 }}
-               />
+              {/* Parallax Background */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: 'url(/pressure_washing.png)',
+                  backgroundAttachment: 'fixed',
+                  backgroundPosition: 'center',
+                  backgroundSize: '130%',
+                  backgroundRepeat: 'no-repeat'
+                }}
+              />
+              {/* Dark overlay for text readability */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.80) 100%)'
+                }}
+              />
 
-               {/* Hover Ring */}
-               <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 z-20" style={{ borderColor: accent }} />
+              {/* Hover Ring */}
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 z-20" style={{ borderColor: accent }} />
 
               <div className="p-8 relative z-10">
                 <div className="flex items-start justify-between mb-6">
-                    <div>
-                        <h3 className="text-2xl font-black uppercase tracking-tight text-white">Pressure Washing</h3>
-                        <p className="text-xs font-bold uppercase tracking-wider mt-1 text-gray-400">Hard Surface Restoration</p>
-                    </div>
-                    <div className="w-12 h-12 rounded flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
-                        <Zap className="w-6 h-6" style={{ color: accent }} />
-                    </div>
+                  <div>
+                    <h3 className="text-2xl font-black uppercase tracking-tight text-white">Pressure Washing</h3>
+                    <p className="text-xs font-bold uppercase tracking-wider mt-1 text-gray-400">Hard Surface Restoration</p>
+                  </div>
+                  <div className="w-12 h-12 rounded flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                    <Zap className="w-6 h-6" style={{ color: accent }} />
+                  </div>
                 </div>
 
                 {/* Tech Spec Line */}
                 <div className="flex items-center gap-3 mb-6 py-3 px-4 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-                    <div className="text-xs font-black uppercase text-gray-400">Spec:</div>
-                    <div className="text-sm font-bold text-white">3000-4000 PSI <span className="mx-2 opacity-30">|</span> High Flow</div>
+                  <div className="text-xs font-black uppercase text-gray-400">Spec:</div>
+                  <div className="text-sm font-bold text-white">3000-4000 PSI <span className="mx-2 opacity-30">|</span> High Flow</div>
                 </div>
 
                 <ul className="space-y-3 mb-8">
-                    {['Concrete Driveways', 'Stone Patios', 'Brick Walkways', 'Pool Decks'].map(item => (
-                        <li key={item} className="flex items-center gap-3">
-                            <Check className="w-5 h-5 flex-shrink-0" style={{ color: accent }} />
-                            <span className="text-sm font-bold text-gray-200">{item}</span>
-                        </li>
-                    ))}
+                  {['Concrete Driveways', 'Stone Patios', 'Brick Walkways', 'Pool Decks'].map(item => (
+                    <li key={item} className="flex items-center gap-3">
+                      <Check className="w-5 h-5 flex-shrink-0" style={{ color: accent }} />
+                      <span className="text-sm font-bold text-gray-200">{item}</span>
+                    </li>
+                  ))}
                 </ul>
 
                 <p className="text-sm leading-relaxed border-t pt-4 text-gray-300" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
-                    High-pressure mechanical cleaning to strip grime, oil, and embedded dirt from durable hardscapes.
+                  High-pressure mechanical cleaning to strip grime, oil, and embedded dirt from durable hardscapes.
                 </p>
               </div>
 
@@ -810,66 +869,66 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
               className="relative overflow-hidden rounded-lg border-2 group hover:border-transparent transition-colors duration-300"
               style={{ borderColor: t.border }}
             >
-               {/* Parallax Background */}
-               <div
-                 className="absolute inset-0"
-                 style={{
-                   backgroundImage: 'url(/soft_clean.png)',
-                   backgroundAttachment: 'fixed',
-                   backgroundPosition: '30% center',
-                   backgroundSize: '140%',
-                   backgroundRepeat: 'no-repeat'
-                 }}
-               />
-               {/* Lighter overlay for text readability */}
-               <div
-                 className="absolute inset-0"
-                 style={{
-                   background: 'linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.70) 100%)'
-                 }}
-               />
+              {/* Parallax Background */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: 'url(/assets/softwash.jpg)',
+                  backgroundAttachment: 'fixed',
+                  backgroundPosition: 'center',
+                  backgroundSize: '100%',
+                  backgroundRepeat: 'no-repeat'
+                }}
+              />
+              {/* Lighter overlay for text readability */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.70) 100%)'
+                }}
+              />
 
-               {/* Hover Ring */}
-               <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 z-20" style={{ borderColor: accent }} />
+              {/* Hover Ring */}
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 z-20" style={{ borderColor: accent }} />
 
               <div className="p-8 relative z-10">
                 <div className="flex items-start justify-between mb-6">
-                    <div>
-                        <h3 className="text-2xl font-black uppercase tracking-tight text-white">Soft Washing</h3>
-                        <p className="text-xs font-bold uppercase tracking-wider mt-1 text-gray-400">Delicate Exterior Sanitization</p>
-                    </div>
-                    <div className="w-12 h-12 rounded flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
-                        <Droplets className="w-6 h-6" style={{ color: accent }} />
-                    </div>
+                  <div>
+                    <h3 className="text-2xl font-black uppercase tracking-tight text-white">Soft Washing</h3>
+                    <p className="text-xs font-bold uppercase tracking-wider mt-1 text-gray-400">Delicate Exterior Sanitization</p>
+                  </div>
+                  <div className="w-12 h-12 rounded flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                    <Droplets className="w-6 h-6" style={{ color: accent }} />
+                  </div>
                 </div>
 
                 {/* Tech Spec Line */}
                 <div className="flex items-center gap-3 mb-6 py-3 px-4 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-                    <div className="text-xs font-black uppercase text-gray-400">Spec:</div>
-                    <div className="text-sm font-bold text-white">Low Pressure <span className="mx-2 opacity-30">|</span> Biodegradable Mix</div>
+                  <div className="text-xs font-black uppercase text-gray-400">Spec:</div>
+                  <div className="text-sm font-bold text-white">Low Pressure <span className="mx-2 opacity-30">|</span> Biodegradable Mix</div>
                 </div>
 
                 <ul className="space-y-3 mb-8">
-                    {['Roof Shingles', 'Vinyl Siding', 'Stucco & Painted Wood', 'Screen Enclosures'].map(item => (
-                        <li key={item} className="flex items-center gap-3">
-                            <Check className="w-5 h-5 flex-shrink-0" style={{ color: accent }} />
-                            <span className="text-sm font-bold text-gray-200">{item}</span>
-                        </li>
-                    ))}
+                  {['Roof Shingles', 'Vinyl Siding', 'Stucco & Painted Wood', 'Screen Enclosures'].map(item => (
+                    <li key={item} className="flex items-center gap-3">
+                      <Check className="w-5 h-5 flex-shrink-0" style={{ color: accent }} />
+                      <span className="text-sm font-bold text-gray-200">{item}</span>
+                    </li>
+                  ))}
                 </ul>
 
                 <p className="text-sm leading-relaxed border-t pt-4 text-gray-300" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
-                    Chemical-based cleaning that kills algae and mold at the root without damaging paint or voiding roof warranties.
+                  Chemical-based cleaning that kills algae and mold at the root without damaging paint or voiding roof warranties.
                 </p>
               </div>
-              
+
               {/* Watermark Icon */}
               <Droplets className="absolute -bottom-6 -right-6 w-48 h-48 opacity-[0.03] pointer-events-none" />
             </motion.div>
           </div>
 
-           {/* Bottom CTA Section - Guarantee + Action */}
-           <motion.div
+          {/* Bottom CTA Section - Guarantee + Action */}
+          <motion.div
             initial="initial"
             whileInView="animate"
             viewport={{ once: true, amount: 0.3 }}
@@ -948,67 +1007,112 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
           </div>
 
           {/* Before/After Sliders - 2-Column Grid */}
-          <motion.div
-            variants={staggerSoft}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-10 lg:gap-12"
-          >
-            {recentJobs.map((job, index) => (
-              <motion.div
-                key={job.title}
-                variants={fadeInSoft}
-                className="group"
-              >
-                {/* Comparison Slider */}
-                <div className="relative rounded-lg overflow-hidden mb-5 border-2 transition-all group-hover:shadow-xl" style={{ borderColor: accent }}>
-                  <ComparisonSlider
-                    accent={accent}
-                    beforeLabel="Before"
-                    beforeHint={job.title}
-                    afterLabel="After"
-                    afterHint="Clean & Restored"
-                    beforeImage={
-                      index === 0 ? "/before-hero.jpg" :
-                      index === 1 ? "/old2.jpg" :
-                      "/old3.jpg"
-                    }
-                    afterImage={
-                      index === 0 ? "/after-hero.jpg" :
-                      index === 1 ? "/new2.jpg" :
-                      "/new3.jpg"
-                    }
-                  />
-                </div>
+          <div className="space-y-12">
+            {/* FEATURED PROJECT - Large Comparison Slider */}
+            <motion.div
+              variants={fadeInSoft}
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="relative rounded-xl overflow-hidden shadow-2xl border-2" style={{ borderColor: accent }}>
+                <ComparisonSlider
+                  accent={accent}
+                  beforeLabel="Before"
+                  beforeHint="Driveway & Walkway"
+                  afterLabel="After"
+                  afterHint="Clean & Bright"
+                  beforeImage="/before-hero.jpg"
+                  afterImage="/after-hero.jpg"
+                />
+              </div>
 
-                {/* Clean Caption */}
+              <div className="mt-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded flex items-center justify-center text-sm font-black text-white flex-shrink-0" style={{ backgroundColor: accent }}>
-                    {index + 1}
+                  <div className="w-8 h-8 rounded flex items-center justify-center text-sm font-black text-white" style={{ backgroundColor: accent }}>
+                    1
                   </div>
                   <div>
-                    <h3 className="text-base font-black uppercase leading-tight mb-1" style={{ color: t.textPrimary }}>
-                      {job.title}
+                    <h3 className="text-lg font-black uppercase leading-tight" style={{ color: t.textPrimary }}>
+                      Driveway Restoration
                     </h3>
-                    <p className="text-xs font-bold" style={{ color: t.textMuted }}>
-                      {job.meta}
+                    <p className="text-sm font-bold" style={{ color: t.textMuted }}>
+                      Oil stain removal and deep concrete cleaning
                     </p>
                   </div>
                 </div>
+                {/* Tech Badge */}
+                <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded border-2" style={{ borderColor: t.border, backgroundColor: t.surfaceBg }}>
+                  <Zap className="w-3 h-3" style={{ color: accent }} />
+                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: t.textSecondary }}>High Pressure</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* GALLERY GRID - Static Before/Afters */}
+            <motion.div
+              variants={staggerSoft}
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+              {/* Job 2: Before */}
+              <motion.div variants={fadeInSoft} className="group relative aspect-square rounded-lg overflow-hidden border-2" style={{ borderColor: t.border }}>
+                <img src="/assets/before1.jpg" alt="Before Cleaning" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm px-3 py-1 rounded text-[10px] font-black uppercase text-white tracking-widest border border-white/20">
+                  Before
+                </div>
               </motion.div>
-            ))}
-          </motion.div>
+
+              {/* Job 2: After */}
+              <motion.div variants={fadeInSoft} className="group relative aspect-square rounded-lg overflow-hidden border-2" style={{ borderColor: accent }}>
+                <img src="/assets/after1.jpg" alt="After Cleaning" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute top-3 left-3 px-3 py-1 rounded text-[10px] font-black uppercase text-white tracking-widest shadow-lg" style={{ backgroundColor: accent }}>
+                  After
+                </div>
+                {/* Result Badge */}
+                <div className="absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center bg-white shadow-lg z-10">
+                  <Check className="w-5 h-5" style={{ color: accent }} />
+                </div>
+              </motion.div>
+
+              {/* Job 3: Before */}
+              <motion.div variants={fadeInSoft} className="group relative aspect-square rounded-lg overflow-hidden border-2" style={{ borderColor: t.border }}>
+                <img src="/assets/before2.jpg" alt="Before Cleaning" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm px-3 py-1 rounded text-[10px] font-black uppercase text-white tracking-widest border border-white/20">
+                  Before
+                </div>
+              </motion.div>
+
+              {/* Job 3: After */}
+              <motion.div variants={fadeInSoft} className="group relative aspect-square rounded-lg overflow-hidden border-2" style={{ borderColor: accent }}>
+                <img src="/assets/after2.jpg" alt="After Cleaning" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute top-3 left-3 px-3 py-1 rounded text-[10px] font-black uppercase text-white tracking-widest shadow-lg" style={{ backgroundColor: accent }}>
+                  After
+                </div>
+                {/* Result Badge */}
+                <div className="absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center bg-white shadow-lg z-10">
+                  <Check className="w-5 h-5" style={{ color: accent }} />
+                </div>
+              </motion.div>
+
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Reviews section - Redesigned Industrial Style */}
       <section
         id="proof"
-        className="relative py-20 scroll-mt-20"
+        className="relative py-20 scroll-mt-20 overflow-hidden"
         style={{ backgroundColor: t.surfaceBg }}
       >
-        <div className={shellClass}>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `radial-gradient(${accent} 1px, transparent 1px)`, backgroundSize: '32px 32px' }} />
+
+        <div className={`${shellClass} relative z-10`}>
           {/* Header */}
           <div className="mb-12 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}10` }}>
@@ -1016,43 +1120,46 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
               <span className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accent }}>Customer Reviews</span>
             </div>
             <h2 className="text-4xl font-black mb-3" style={{ color: t.textPrimary }}>
-              Trusted by {config.city} Homeowners
+              Trusted by {config.city}
             </h2>
             <p className="text-base font-medium max-w-2xl mx-auto" style={{ color: t.textMuted }}>
-              Real reviews from real customers across Tomball, Spring, Cypress, and The Woodlands
+              Real reviews from verified homeowners across Greater Houston
             </p>
           </div>
 
           {/* Stats Bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
             {/* Google Rating */}
-            <div className="p-6 rounded-lg border-2 text-center" style={{ borderColor: accent, backgroundColor: t.cardBg }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" className="h-4 mx-auto mb-3" />
+            <div className="p-6 rounded-xl border-2 text-center h-full flex flex-col justify-center items-center shadow-sm" style={{ borderColor: accent, backgroundColor: t.cardBg }}>
+              <div className="flex items-center gap-2 mb-3">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" className="h-6 w-6" />
+                <span className="text-lg font-black" style={{ color: t.textPrimary }}>Google</span>
+              </div>
               <div className="flex items-center justify-center gap-1 mb-2">
-                {[1,2,3,4,5].map(i => (
-                  <Star key={i} className="h-4 w-4" style={{ color: '#FFA500', fill: '#FFA500' }} />
+                {[1, 2, 3, 4, 5].map(i => (
+                  <Star key={i} className="h-5 w-5" style={{ color: '#FFA500', fill: '#FFA500' }} />
                 ))}
               </div>
               <div className="text-3xl font-black mb-1" style={{ color: t.textPrimary }}>{ratingText}</div>
-              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>{reviewCount}+ Reviews</div>
+              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>{reviewCount}+ 5-Star Reviews</div>
             </div>
 
             {/* Years */}
-            <div className="p-6 rounded-lg border-2 text-center" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
+            <div className="p-6 rounded-xl border-2 text-center h-full flex flex-col justify-center items-center shadow-sm" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
               <div className="text-4xl font-black mb-2" style={{ color: accent }}>{years}+</div>
-              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>Years in {config.city}</div>
+              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>Years in Business</div>
             </div>
 
             {/* Licensed */}
-            <div className="p-6 rounded-lg border-2 text-center" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
+            <div className="p-6 rounded-xl border-2 text-center h-full flex flex-col justify-center items-center shadow-sm" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
               <ShieldCheck className="h-10 w-10 mx-auto mb-2" style={{ color: accent }} />
               <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>Licensed & Insured</div>
             </div>
 
             {/* Availability */}
-            <div className="p-6 rounded-lg border-2 text-center" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
+            <div className="p-6 rounded-xl border-2 text-center h-full flex flex-col justify-center items-center shadow-sm" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
               <Check className="h-10 w-10 mx-auto mb-2" style={{ color: accent }} />
-              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>Same-Week Available</div>
+              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>Fast Response</div>
             </div>
           </div>
 
@@ -1065,35 +1172,41 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
                 initial="initial"
                 whileInView="animate"
                 viewport={{ once: true }}
-                className="relative p-6 rounded-lg border-2 hover:border-transparent transition-all group"
+                className="relative p-8 rounded-xl border-2 hover:border-transparent transition-all group h-full flex flex-col shadow-sm hover:shadow-xl"
                 style={{ backgroundColor: t.cardBg, borderColor: t.border }}
               >
                 {/* Hover effect */}
-                <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 rounded-lg" style={{ borderColor: accent }} />
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 rounded-xl" style={{ borderColor: accent }} />
 
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1 mb-4">
-                  {[1,2,3,4,5].map(star => (
-                    <Star key={star} className="h-4 w-4" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                  ))}
+                {/* Header: Stars & Google Icon */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star key={star} className="h-4 w-4" style={{ color: '#FFA500', fill: '#FFA500' }} />
+                    ))}
+                  </div>
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" className="h-5 w-5 opacity-50 grayscale group-hover:grayscale-0 transition-all" />
                 </div>
 
                 {/* Quote */}
-                <p className="text-base leading-relaxed font-medium mb-6" style={{ color: t.textPrimary }}>
+                <p className="text-base leading-relaxed font-medium mb-8 flex-grow italic" style={{ color: t.textSecondary }}>
                   "{testimonial.quote}"
                 </p>
 
                 {/* Author */}
-                <div className="flex items-center gap-3 pt-4 border-t-2" style={{ borderColor: t.border }}>
+                <div className="flex items-center gap-4 pt-6 border-t font-sans" style={{ borderColor: t.borderLight }}>
                   <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-white"
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md"
                     style={{ backgroundColor: accent }}
                   >
                     {testimonial.name.charAt(0)}
                   </div>
                   <div>
                     <div className="text-sm font-black" style={{ color: t.textPrimary }}>{testimonial.name}</div>
-                    <div className="text-xs font-bold" style={{ color: t.textMuted }}>Verified Customer</div>
+                    <div className="flex items-center gap-1">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-green-600">Verified Customer</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -1103,18 +1216,37 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
       </section>
 
       {/* Process - Industrial Timeline */}
-      <section className="py-20" style={{ borderTop: `4px solid ${accent}`, backgroundColor: t.cardBg }}>
-        <div className={`${shellClass} mt-16`}>
+      <section className="relative py-20 overflow-hidden" style={{ borderTop: `4px solid ${accent}`, borderBottom: `4px solid ${accent}` }}>
+        {/* Parallax background */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/assets/softwash.jpg)',
+            backgroundAttachment: 'fixed',
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
+        {/* Strong dark overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.88) 100%)'
+          }}
+        />
+
+        <div className={`${shellClass} relative z-10 mt-8`}>
           {/* Header */}
           <div className="mb-12 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}10` }}>
               <Zap className="h-4 w-4" style={{ color: accent }} />
-              <span className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accent }}>How it Works</span>
+              <span className="text-xs font-black uppercase tracking-[0.15em] text-white">How it Works</span>
             </div>
-            <h2 className="text-4xl font-black mb-3" style={{ color: t.textPrimary }}>
+            <h2 className="text-4xl font-black mb-3 text-white">
               Simple 3-Step Process
             </h2>
-            <p className="text-base font-medium max-w-2xl mx-auto" style={{ color: t.textMuted }}>
+            <p className="text-base font-medium max-w-2xl mx-auto text-gray-400">
               Fast, transparent, and professional service from start to finish
             </p>
           </div>
@@ -1134,27 +1266,23 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
                   initial="initial"
                   whileInView="animate"
                   viewport={{ once: true }}
-                  className="relative"
+                  className="relative h-full"
                 >
-                  <div className="p-6 rounded-lg border-2 hover:border-transparent transition-all group" style={{ backgroundColor: t.surfaceBg, borderColor: t.border }}>
-                    {/* Hover effect */}
-                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 rounded-lg" style={{ borderColor: accent }} />
+                  <div className="p-8 rounded-xl shadow-xl transition-all group h-full flex flex-col items-center text-center bg-white/95 backdrop-blur-sm hover:-translate-y-1 duration-300">
 
                     {/* Step number */}
                     <div
-                      className="relative z-10 mx-auto flex h-20 w-20 items-center justify-center rounded-lg text-3xl font-black text-white shadow-lg mb-4 border-4"
-                      style={{ backgroundColor: accent, borderColor: '#ffffff' }}
+                      className="relative z-10 mx-auto flex h-20 w-20 items-center justify-center rounded-2xl text-3xl font-black text-white shadow-lg mb-6 transform group-hover:scale-110 transition-transform duration-300"
+                      style={{ backgroundColor: accent }}
                     >
                       {index + 1}
                     </div>
 
-                    <h3 className="text-lg font-black uppercase tracking-wide text-center mb-3" style={{ color: t.textPrimary }}>
+                    <h3 className="text-xl font-black uppercase mb-3 text-slate-900">
                       {step.title}
                     </h3>
 
-                    <div className="h-px w-16 mx-auto mb-3" style={{ backgroundColor: accent }} />
-
-                    <p className="text-sm leading-relaxed text-center font-medium" style={{ color: t.textMuted }}>
+                    <p className="text-sm font-medium leading-relaxed text-slate-600">
                       {step.body}
                     </p>
                   </div>
@@ -1242,19 +1370,19 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* CTA Section - Industrial Bold */}
-      <section id="home-cta" className="relative py-20 overflow-hidden" style={{ borderTop: `4px solid ${accent}`, backgroundColor: '#000000' }}>
+      < section id="home-cta" className="relative py-20 overflow-hidden" style={{ borderTop: `4px solid ${accent}`, backgroundColor: '#000000' }}>
         {/* Grid pattern background */}
-        <div
+        < div
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: `repeating-linear-gradient(0deg, ${accent} 0px, transparent 2px, transparent 30px), repeating-linear-gradient(90deg, ${accent} 0px, transparent 2px, transparent 30px)`,
           }}
         />
 
-        <div className={`${shellClass} relative z-10`}>
+        < div className={`${shellClass} relative z-10`}>
           <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
             <div className="flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
@@ -1310,8 +1438,8 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
               </p>
             </div>
           </div>
-        </div>
-      </section>
+        </div >
+      </section >
 
       <footer className="py-10" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
 
@@ -1406,6 +1534,6 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         ctaLabel={config.ctaPrimary}
         email={config.email}
       />
-    </div>
+    </div >
   );
 }

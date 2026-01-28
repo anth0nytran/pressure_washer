@@ -2,12 +2,12 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Pressure Washing and Soft Washing Tomball TX | Made New',
-  description: 'Top-rated pressure washing and soft washing in Tomball, Spring, Cypress, Magnolia, and The Woodlands. House and roof wash, driveways, gutters, fences, trash can cleaning. Free estimates, fast scheduling. Call 832-427-2439.',
-  keywords: 'pressure washing tomball, soft washing tomball, house washing tomball, roof cleaning tomball, driveway pressure washing, gutter cleaning tomball, fence washing, trash can cleaning tomball, exterior cleaning, pressure washing spring tx, pressure washing cypress, pressure washing magnolia, pressure washing the woodlands',
+  title: 'Pressure Washing Greater Houston | Made New | Tomball, Spring, Woodlands',
+  description: 'Top-rated pressure washing and soft washing in the Greater Houston Area. Serving Tomball, Spring, Cypress, Magnolia, and The Woodlands. Free estimates, fast scheduling.',
+  keywords: 'pressure washing greater houston, exterior cleaning houston, pressure washing tomball, soft washing spring tx, house washing cypress, roof cleaning magnolia, driveway cleaning the woodlands, gutter cleaning houston, fence washing, trash can cleaning, commercial pressure washing houston',
   openGraph: {
-    title: 'Made New Pressure Washing | Pressure Washing and Soft Washing in Tomball, TX',
-    description: 'Making dirty things look new again. Pressure washing and soft washing in Greater Houston for concrete, roofs, siding, gutters, fences, and trash can cleaning. Free estimates, fast scheduling.',
+    title: 'Made New Pressure Washing | Greater Houston Area',
+    description: 'Making dirty things look new again. Professional pressure washing and soft washing across Greater Houston, including Tomball, Spring, Cypress, Magnolia, and The Woodlands.',
     type: 'website',
     locale: 'en_US',
   },
@@ -51,6 +51,10 @@ export default function RootLayout({
                 longitude: -95.6161,
               },
               areaServed: [
+                {
+                  '@type': 'AdministrativeArea',
+                  name: 'Greater Houston',
+                },
                 {
                   '@type': 'City',
                   name: 'Tomball',
