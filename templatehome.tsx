@@ -402,50 +402,6 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         </div>
       </section>
 
-      {/* 
-        =============================================
-        FEATURE 3: ROOF SOFT WASHING (Specialized)
-        =============================================
-      */}
-      <section className="py-0 bg-gray-50 border-t border-gray-100">
-        <div className="grid md:grid-cols-2">
-          <div className="h-[400px] md:h-auto bg-gray-300 relative">
-            <img src="https://placehold.co/800x600/0e2a47/white?text=Roof+Soft+Wash" alt="Roof Soft Washing Algae Removal" className="absolute inset-0 w-full h-full object-cover" />
-            <div className="absolute bottom-0 left-0 bg-[#0e2a47] text-white py-2 px-6 font-bold uppercase tracking-widest text-sm">Roof Care</div>
-          </div>
-          <div className="p-12 md:p-20 flex flex-col justify-center">
-            <div className="flex items-center gap-3 mb-4">
-              <CloudRain className="w-8 h-8 text-[#0e2a47]" />
-              <h3 className="text-3xl font-serif font-bold text-[#0e2a47]">Roof Soft Washing (Algae / Black Streak Removal)</h3>
-            </div>
-            <h4 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-6">Safe Low-Pressure Shingle Restoration</h4>
-            <p className="text-gray-600 leading-relaxed mb-6">
-              Those black streaks on your roof aren't just dirt—they're a form of algae called Gloeocapsa Magma that eats away at your shingles. Our soft wash process kills the growth without using high pressure.
-            </p>
-            <ul className="space-y-3 mb-8">
-              <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
-                <span className="text-gray-700 font-medium">Instantly Removes Black Streaks</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
-                <span className="text-gray-700 font-medium">Extends Shingle Life & Energy Efficiency</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
-                <span className="text-gray-700 font-medium">HOA Compliance Guaranteed</span>
-              </li>
-            </ul>
-            <button
-              onClick={() => scrollToEstimate('Roof Cleaning')}
-              className="self-start px-8 py-3 text-white font-bold uppercase tracking-widest text-sm hover:opacity-90 transition-opacity rounded-sm"
-              style={{ backgroundColor: brandNavy }}
-            >
-              Get Roof Quote
-            </button>
-          </div>
-        </div>
-      </section>
 
       {/* 
         =============================================
