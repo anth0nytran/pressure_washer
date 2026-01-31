@@ -1,1539 +1,904 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Phone, ShieldCheck, Star, Menu, X, Droplets, Zap, Check, ArrowRight, ClipboardList, Calendar, Clock, Leaf, CloudRain, Home, Umbrella, Layers, PanelTop, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Phone, Menu, X, Check, Star, ShieldCheck, Clock, ThumbsUp, ArrowRight, MapPin, UserCheck, Droplets, Zap, CheckCircle2, CloudRain, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import type { BusinessConfig } from '@/lib/demoDefaults';
-import { LeadCaptureModal } from './components/LeadCaptureModal';
-import { ComparisonSlider } from './components/ComparisonSlider';
-import { ImagePlaceholder } from './components/ImagePlaceholder';
-import { PreviewBanner } from './components/PreviewBanner';
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-const fadeInSoft = {
-  initial: { opacity: 0, y: 12 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.45 } },
-};
-const staggerSoft = {
-  animate: { transition: { staggerChildren: 0.08 } },
-};
 
 export function TemplateHome({ config }: { config: BusinessConfig }) {
-  const accent = config.accent.hex;
-  const accentRed = '#b91c1c'; // More professional brick red
-  const t = config.theme.colors; // Theme colors shorthand
-  const isDark = config.theme.isDark;
-  const cleanPhone = useMemo(() => config.phone.replace(/\D/g, ''), [config.phone]);
-  const services = config.services.slice(0, 4);
-  const ratingText = config.rating ? config.rating.toFixed(1) : '4.9';
-  const reviewCount = config.reviewCount ?? 120;
-  const years = config.yearsInBusiness ?? 10;
-  const shellClass = 'mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-12 2xl:max-w-[1400px] 2xl:px-16';
-  const [leadOpen, setLeadOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [inlineFormData, setInlineFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    service: 'Pressure Washing',
-  });
-  const [inlineFormSubmitting, setInlineFormSubmitting] = useState(false);
+  // Brand Colors
+  const brandNavy = '#0e2a47';
+  const brandRed = '#e60000';
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const cleanPhone = useMemo(() => config.phone.replace(/\D/g, ''), [config.phone]);
+
+  // Form State for Embedded Form
+  const [selectedService, setSelectedService] = useState('Pressure Washing');
+  const [formName, setFormName] = useState('');
+  const [formPhone, setFormPhone] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const scrollToEstimate = (service: string = 'General Inquiry') => {
+    // Map various CTA inputs to the actual select options
+    const serviceMap: { [key: string]: string } = {
+      'Hero CTA': 'Pressure Washing',
+      'Soft Washing': 'House Soft Washing',
+      'Pressure Washing': 'Driveway / Concrete',
+      'Gallery Request': 'General Inquiry',
+      'Process Step': 'General Inquiry',
+      'Commercial Inquiry': 'Commercial Cleaning',
+      'Wood Fence Restoration': 'Fence / Wood Cleaning',
+      'Trash Can Sanitization': 'Trash Can Cleaning',
+      'Gutter Cleaning': 'Gutter Cleaning',
+      'Roof Cleaning': 'Roof Soft Wash',
+      'Driveway Cleaning': 'Driveway / Concrete',
+      'Graffiti': 'General Inquiry'
+    };
+
+    const finalService = serviceMap[service] || service;
+    setSelectedService(finalService);
+    setMobileMenuOpen(false);
+    const element = document.getElementById('estimate-form');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    // Simulate submission
+    setTimeout(() => {
+      alert('Estimate Request Sent! Blake will text you shortly.');
+      setSubmitting(false);
+      setFormName('');
+      setFormPhone('');
+    }, 800);
+  };
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Gallery State
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Mock Gallery Data (Placeholders with different aspect ratios)
+  const galleryImages = [
+    { src: "https://placehold.co/600x400/0e2a47/white?text=Driveway+Clean", alt: "Concrete Driveway Pressure Washing in Tomball TX", aspect: "aspect-[3/2]" },
+    { src: "https://placehold.co/400x600/e60000/white?text=Siding+Soft+Wash", alt: "House Soft Washing Siding Cleaning in Spring TX", aspect: "aspect-[2/3]" },
+    { src: "https://placehold.co/600x600/0e2a47/white?text=Patio+Restoration", alt: "Brick Patio Concrete Pressure Washing in Cypress TX", aspect: "aspect-square" },
+    { src: "https://placehold.co/600x400/0e2a47/white?text=Roof+Washing", alt: "Roof Soft Wash Cleaning in The Woodlands TX", aspect: "aspect-[3/2]" },
+    { src: "https://placehold.co/400x500/e60000/white?text=Fence+Restoration", alt: "Wood Fence Cleaning Restoration in Magnolia TX", aspect: "aspect-[4/5]" },
+    { src: "https://placehold.co/600x400/0e2a47/white?text=Gutter+Brightening", alt: "Gutter Cleaning Service in Tomball Texas", aspect: "aspect-[3/2]" },
+  ];
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
 
   const navLinks = [
     { label: 'Services', href: '#services' },
-    { label: 'Why Us', href: '#why-us' },
-    { label: 'Our Work', href: '#work' },
-    { label: 'Reviews', href: '#proof' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Process', href: '#process' },
+    { label: 'About Blake', href: '#about' },
+    { label: 'Reviews', href: '#reviews' },
+    { label: 'Contact', href: '#estimate-form' },
   ];
 
-  const benefits = [
-    'Fast response and quick scheduling',
-    'Free estimates — call or text today',
-    'Incredible attention to detail on every job',
-    'Walk-through after completion to ensure satisfaction',
-  ];
-  const recentJobs = [
-    {
-      title: 'Driveway Pressure Washing',
-      meta: 'Residential  -  Completed',
-      result: 'Complete driveway cleaning',
-    },
-    {
-      title: 'Roof Soft Washing',
-      meta: 'Residential  -  Completed',
-      result: 'Roof cleaning and restoration',
-    },
-    {
-      title: 'Concrete Cleaning',
-      meta: 'Residential  -  Completed',
-      result: 'Surface cleaning and restoration',
-    },
-  ];
-
-  const steps = [
-    {
-      title: 'Call or text us',
-      body: 'Contact us at 832-427-2439 for a free estimate. Fast response and quick scheduling available.',
-    },
-    {
-      title: 'Free estimate',
-      body: 'We arrive on time, assess your needs, and provide a clear estimate before any work starts.',
-    },
-    {
-      title: 'Job completed',
-      body: 'We finish the job with attention to detail, then walk you through everything to ensure your satisfaction.',
-    },
-  ];
-
-  const handleInlineFormSubmit = async (e: React.FormEvent) => {
+  const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    setInlineFormSubmitting(true);
-
-    const emailBody = `New Quote Request from ${config.businessName} Website\n\n` +
-      `Name: ${inlineFormData.name}\n` +
-      `Phone: ${inlineFormData.phone}\n` +
-      `Email: ${inlineFormData.email || 'Not provided'}\n` +
-      `Service: ${inlineFormData.service}\n`;
-
-    if (config.email) {
-      const mailtoLink = `mailto:${config.email}?subject=New Quote Request - ${inlineFormData.name}&body=${encodeURIComponent(emailBody)}`;
-      window.location.href = mailtoLink;
+    setMobileMenuOpen(false);
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
-
-    setTimeout(() => {
-      alert('Thank you! We\'ll contact you within 2 hours.');
-      setInlineFormSubmitting(false);
-      setInlineFormData({ name: '', phone: '', email: '', service: 'Pressure Washing' });
-    }, 500);
   };
-
-  const beforePlaceholder = config.imagePlaceholders[0] ?? {
-    label: 'Before Photo',
-    hint: 'Leak damage or worn shingles',
-  };
-  const afterPlaceholder = config.imagePlaceholders[1] ?? {
-    label: 'After Photo',
-    hint: 'Clean new install',
-  };
-  const crewPlaceholder = config.imagePlaceholders[2] ?? {
-    label: 'Crew Photo',
-    hint: 'Technicians on site',
-  };
-
-  // Computed tinted backgrounds using accent
-  const accentTint = `${accent}08`; // Very subtle 8% opacity tint
-  const accentGlow = `${accent}12`; // Slightly stronger for glows
-  const reviewCardBg = isDark ? t.cardBg : 'rgba(255,255,255,0.95)';
-  const reviewCardBorder = isDark ? t.border : 'rgba(255,255,255,0.3)';
-  const promiseBg = isDark ? t.surfaceBg : t.cardBg;
-  const promiseDivider = isDark ? t.borderLight : t.border;
 
   return (
-    <div className="relative" style={{ backgroundColor: t.pageBg, color: t.textPrimary }}>
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 shadow-xl border-b-2"
-        style={{
-          backgroundColor: '#0a0a0a',
-          borderColor: accent
-        }}
-      >
-        <div className={`${shellClass} flex items-center justify-between py-2`}>
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-3 group">
-            <img
-              src="/logo-full.svg"
-              alt={config.businessName}
-              className="h-14 w-auto object-contain drop-shadow-md transition-transform group-hover:scale-105"
-            />
-          </a>
+    <div className="font-sans text-gray-800 bg-white min-h-screen flex flex-col selection:bg-red-100 selection:text-red-900">
 
-          {/* Desktop Nav */}
-          <div className="hidden items-center gap-6 md:flex">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-xs font-bold uppercase tracking-wider transition-all hover:scale-105"
-                style={{ color: '#ffffff' }}
-              >
-                {link.label}
-              </a>
-            ))}
+      <div className="text-white text-xs md:text-sm font-bold w-full" style={{ backgroundColor: brandNavy }}>
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 h-10 flex justify-between items-center">
+          <div className="hidden md:flex items-center opacity-90">
+            <span className="tracking-wide">Family Owned & Operated</span>
           </div>
-
-          {/* Desktop CTA */}
-          <div className="hidden items-center gap-3 md:flex">
-            <a
-              href={`tel:${cleanPhone}`}
-              className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-black text-white transition-all hover:scale-105 border-2"
-              style={{ backgroundColor: accent, borderColor: accent }}
-            >
-              <Phone className="h-4 w-4" />
-              {config.phone}
+          <div className="flex items-center gap-6 ml-auto">
+            <a href={`tel:${cleanPhone}`} className="hover:text-gray-200 flex items-center gap-2 transition-opacity">
+              <Phone className="w-4 h-4" /> <span className="hidden sm:inline">Call Or Text:</span> {config.phone}
             </a>
+            <button onClick={() => scrollToEstimate('General Inquiry')} className="hover:text-red-400 transition-colors hidden sm:block">
+              Get A Free Estimate
+            </button>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg md:hidden border-2"
-            style={{ borderColor: accent, color: '#ffffff' }}
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="px-6 py-4 md:hidden" style={{ borderTop: `2px solid ${accent}`, backgroundColor: '#000000' }}>
-            <div className="space-y-2">
+      {/* 
+        =============================================
+        STICKY NAVIGATION
+        =============================================
+      */}
+      <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6">
+          <div className="flex justify-between items-center h-20 md:h-24">
+            <div className="flex-shrink-0 relative z-50">
+              <a href="#" onClick={(e) => handleScrollTo(e, '#top')}>
+                <img className="h-16 md:h-20 w-auto drop-shadow-sm" src="/logo-full.svg" alt={config.businessName} />
+              </a>
+            </div>
+
+            <div className="hidden xl:flex items-center gap-8">
               {navLinks.map((link) => (
                 <a
-                  key={link.href}
+                  key={link.label}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block rounded-lg px-4 py-3 text-sm font-bold uppercase tracking-wider transition-all hover:bg-white/10"
-                  style={{ color: '#ffffff' }}
+                  onClick={(e) => handleScrollTo(e, link.href)}
+                  className="text-xs font-bold uppercase tracking-widest text-[#0e2a47] hover:text-red-600 transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
-            </div>
-            <div className="mt-4 pt-4" style={{ borderTop: `2px solid ${accent}` }}>
-              <a
-                href={`tel:${cleanPhone}`}
-                className="flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-black text-white border-2"
-                style={{ backgroundColor: accent, borderColor: accent }}
+              <button
+                onClick={() => scrollToEstimate('General Quote')}
+                className="px-6 py-3 text-white font-bold uppercase tracking-widest text-xs hover:opacity-90 transition-opacity rounded-sm shadow-md flex items-center gap-2"
+                style={{ backgroundColor: brandNavy }}
               >
-                <Phone className="h-4 w-4" />
-                {config.phone}
-              </a>
+                Free Estimate <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex xl:hidden items-center">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-[#0e2a47]"
+              >
+                {mobileMenuOpen ? <X className="h-8 w-8" /> : <Menu className="h-8 w-8" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {mobileMenuOpen && (
+          <div className="xl:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl z-50">
+            <div className="flex flex-col">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="block px-6 py-4 text-sm font-bold uppercase text-[#0e2a47] border-b border-gray-50 hover:bg-gray-50"
+                  onClick={(e) => handleScrollTo(e, link.href)}
+                >
+                  {link.label}
+                </a>
+              ))}
+              <div className="p-4 bg-gray-50">
+                <button
+                  onClick={() => scrollToEstimate('Mobile Menu')}
+                  className="w-full py-4 text-white font-bold uppercase tracking-widest hover:opacity-90 transition-opacity rounded-sm"
+                  style={{ backgroundColor: brandRed }}
+                >
+                  Get A Free Estimate
+                </button>
+              </div>
             </div>
           </div>
         )}
       </nav>
 
-      {/* ----------------------------------------------------
-        HERO SECTION - INDUSTRIAL CLEAN DESIGN
-        ----------------------------------------------------
+      {/* 
+        =============================================
+        HERO SECTION
+        =============================================
       */}
-      <section className="relative pt-24 pb-20 lg:pt-32 lg:pb-32 overflow-hidden">
+      <section id="top" className="relative h-[700px] flex items-center justify-center">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/hero_main.jpg"
+            alt="Pressure Washing Truck"
+            className="w-full h-full object-cover object-bottom"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30"></div>
+        </div>
 
-        {/* 1. Background Image - Positioned up to show action */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: 'url(/hero-background.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center 60%',
-            backgroundRepeat: 'no-repeat'
-          }}
-        />
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 text-center text-white mt-10">
+          <div className="inline-block mb-4 px-4 py-1 bg-red-600/90 text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-sm">
+            Professional Exterior Cleaning
+          </div>
 
-        {/* 2. Darker Overlay - Shows more of the image */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            background: `linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.70) 100%)`
-          }}
-        />
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold uppercase tracking-wide mb-6 drop-shadow-2xl leading-[1.1]">
+            Pressure Washing & <br /> <span className="text-red-500">Soft Washing</span> in Tomball, TX
+          </h1>
 
-        {/* 3. Industrial Grid Pattern Overlay */}
-        <div
-          className="absolute inset-0 z-0 opacity-[0.05]"
-          style={{
-            backgroundImage: `repeating-linear-gradient(0deg, ${accent} 0px, transparent 2px, transparent 30px), repeating-linear-gradient(90deg, ${accent} 0px, transparent 2px, transparent 30px)`,
-          }}
-        />
+          <p className="text-lg md:text-xl font-medium tracking-wide mb-10 drop-shadow-md font-sans text-gray-200 max-w-3xl mx-auto">
+            Concrete gets a professional pressure wash; most other surfaces get a safe soft wash. Based in Tomball, serving Spring, Cypress, Magnolia, and The Woodlands. Call or text today for a free estimate.
+          </p>
 
-        {/* Content Container */}
-        <div className={`${shellClass} relative z-10 grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:gap-12 lg:items-start`}>
-          {/* Left Column - Content */}
-          <motion.div initial="initial" animate="animate" variants={fadeInUp} className="space-y-6 lg:space-y-8">
-
-            {/* Headline Area */}
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.15em] border-2"
-                style={{
-                  color: '#ffffff',
-                  borderColor: accent,
-                  backgroundColor: accent
-                }}
-              >
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: accentRed }}></span>
-                Now Serving {config.city}
-              </div>
-
-              <h1 className="text-4xl font-black leading-[1.1] tracking-tight md:text-5xl lg:text-6xl text-white">
-                Professional Pressure Washing in <span style={{ color: accent }}>{config.city}, TX</span>
-              </h1>
-
-              <p className="text-xl font-semibold leading-relaxed max-w-xl text-gray-100">
-                {config.brandLine || `Making dirty things look new again — spray the old away.`}
-              </p>
-
-              <p className="text-base font-medium leading-relaxed max-w-xl text-gray-300">
-                Concrete gets the pressure wash. Everything else gets a safe soft wash. Serving Tomball, Spring, Cypress, Magnolia, The Woodlands & Greater Houston.
-              </p>
-            </div>
-
-            {/* Key benefits - Stronger Typography */}
-            <div className="space-y-4 max-w-xl">
-              <div className="flex items-start gap-4 p-4 rounded-lg border-l-4 backdrop-blur-sm" style={{ backgroundColor: 'rgba(255,255,255,0.12)', borderColor: accent }}>
-                <div className="flex-shrink-0 w-10 h-10 rounded flex items-center justify-center" style={{ backgroundColor: accent }}>
-                  <Check className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p className="text-lg font-black text-white leading-tight mb-1">
-                    Same-Day Estimates
-                  </p>
-                  <p className="text-sm font-medium text-gray-300">
-                    Call or text now for instant scheduling
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-4 rounded-lg border-l-4 backdrop-blur-sm" style={{ backgroundColor: 'rgba(255,255,255,0.12)', borderColor: accent }}>
-                <div className="flex-shrink-0 w-10 h-10 rounded flex items-center justify-center" style={{ backgroundColor: accent }}>
-                  <Check className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p className="text-lg font-black text-white leading-tight mb-1">
-                    100% Satisfaction Guaranteed
-                  </p>
-                  <p className="text-sm font-medium text-gray-300">
-                    Walk-through after every job
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 p-4 rounded-lg border-l-4 backdrop-blur-sm" style={{ backgroundColor: 'rgba(255,255,255,0.12)', borderColor: accent }}>
-                <div className="flex-shrink-0 w-10 h-10 rounded flex items-center justify-center" style={{ backgroundColor: accent }}>
-                  <Check className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p className="text-lg font-black text-white leading-tight mb-1">
-                    Protect Your Investment
-                  </p>
-                  <p className="text-sm font-medium text-gray-300">
-                    Careful with landscaping, attention to detail
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right Column - Inline Lead Capture Form */}
-          <motion.div
-            initial="initial"
-            animate="animate"
-            variants={fadeInUp}
-            className="relative"
-          >
-            <div
-              className="rounded-lg p-7 border-2"
-              style={{
-                backgroundColor: '#ffffff',
-                borderColor: accent,
-                boxShadow: `0 10px 40px rgba(0,0,0,0.2), 0 0 0 1px ${accent}50`
-              }}
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <a
+              href={`tel:${cleanPhone}`}
+              className="px-10 py-5 text-white font-serif font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#091d33] transition-colors rounded-sm shadow-xl min-w-[240px]"
+              style={{ backgroundColor: brandNavy }}
             >
-              {/* Form header */}
-              <div className="mb-6">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-1 tracking-tight leading-none">
-                      Get Your<br />Free Quote
-                    </h3>
-                    <div className="flex items-center gap-1 mt-2">
-                      <Star className="h-3.5 w-3.5" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <Star className="h-3.5 w-3.5" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <Star className="h-3.5 w-3.5" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <Star className="h-3.5 w-3.5" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <Star className="h-3.5 w-3.5" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <span className="text-xs font-black text-slate-900 ml-1">5.0</span>
-                    </div>
-                  </div>
-                  <a
-                    href={`tel:${cleanPhone}`}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded border-2 hover:bg-gray-50 transition-colors"
-                    style={{ borderColor: accent }}
-                  >
-                    <Phone className="h-3.5 w-3.5" style={{ color: accent }} />
-                    <span className="text-xs font-black" style={{ color: accent }}>CALL</span>
-                  </a>
-                </div>
-                <div className="h-px w-full" style={{ backgroundColor: `${accent}30` }} />
-              </div>
-
-              {/* Form fields - Visual Progression */}
-              <form onSubmit={handleInlineFormSubmit} className="space-y-4">
-                {/* Step 1 - Name */}
-                <div className="relative">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white" style={{ backgroundColor: accent }}>
-                      1
-                    </div>
-                    <label className="text-sm font-black uppercase tracking-wide text-slate-900">
-                      Your Name
-                    </label>
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={inlineFormData.name}
-                    onChange={(e) => setInlineFormData({ ...inlineFormData, name: e.target.value })}
-                    className="w-full rounded-lg border-2 px-4 py-3 text-base font-semibold focus:outline-none focus:border-blue-600 transition-all"
-                    style={{
-                      borderColor: inlineFormData.name ? accent : '#cbd5e1',
-                      color: '#0f172a',
-                      backgroundColor: inlineFormData.name ? `${accent}05` : '#ffffff'
-                    }}
-                    placeholder="John Smith"
-                  />
-                </div>
-
-                {/* Step 2 - Phone */}
-                <div className="relative">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white" style={{ backgroundColor: accent }}>
-                      2
-                    </div>
-                    <label className="text-sm font-black uppercase tracking-wide text-slate-900">
-                      Phone Number
-                    </label>
-                  </div>
-                  <input
-                    type="tel"
-                    required
-                    value={inlineFormData.phone}
-                    onChange={(e) => setInlineFormData({ ...inlineFormData, phone: e.target.value })}
-                    className="w-full rounded-lg border-2 px-4 py-3 text-base font-semibold focus:outline-none focus:border-blue-600 transition-all"
-                    style={{
-                      borderColor: inlineFormData.phone ? accent : '#cbd5e1',
-                      color: '#0f172a',
-                      backgroundColor: inlineFormData.phone ? `${accent}05` : '#ffffff'
-                    }}
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
-
-                {/* Step 3 - Service */}
-                <div className="relative">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white" style={{ backgroundColor: accent }}>
-                      3
-                    </div>
-                    <label className="text-sm font-black uppercase tracking-wide text-slate-900">
-                      Service Needed
-                    </label>
-                  </div>
-                  <select
-                    value={inlineFormData.service}
-                    onChange={(e) => setInlineFormData({ ...inlineFormData, service: e.target.value })}
-                    className="w-full rounded-lg border-2 px-4 py-3 text-base font-semibold focus:outline-none focus:border-blue-600 transition-all"
-                    style={{
-                      borderColor: accent,
-                      color: '#0f172a',
-                      backgroundColor: `${accent}05`
-                    }}
-                  >
-                    <option>Pressure Washing</option>
-                    <option>Soft Washing</option>
-                    <option>House Wash</option>
-                    <option>Roof Wash</option>
-                    <option>Not Sure</option>
-                  </select>
-                </div>
-
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  disabled={inlineFormSubmitting}
-                  className="w-full rounded-lg px-6 py-4 text-base font-black text-white uppercase tracking-wide transition-all hover:opacity-90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed mt-3 relative overflow-hidden"
-                  style={{ backgroundColor: accent }}
-                >
-                  <span className="relative z-10">
-                    {inlineFormSubmitting ? 'Sending...' : '→ Get Free Estimate'}
-                  </span>
-                </button>
-              </form>
-
-              {/* Social Proof */}
-              <div className="mt-5 pt-5 border-t-2" style={{ borderColor: `${accent}15` }}>
-                <div className="flex items-center justify-center gap-3 text-center">
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-1 justify-center mb-1">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" className="h-3" />
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-3 w-3" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <Star className="h-3 w-3" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <Star className="h-3 w-3" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <Star className="h-3 w-3" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                      <Star className="h-3 w-3" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                    </div>
-                    <p className="text-[10px] font-bold text-slate-600 mt-1">50+ Reviews</p>
-                  </div>
-                  <div className="h-10 w-px bg-slate-300"></div>
-                  <div className="flex flex-col">
-                    <p className="text-lg font-black" style={{ color: accent }}>2hr</p>
-                    <p className="text-[10px] font-bold text-slate-600">Avg Response</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Stats bar - Upgraded Industrial Style */}
-      <section className="relative py-12 overflow-hidden" style={{ backgroundColor: '#0a0a0a' }}>
-        {/* Grid pattern background */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `repeating-linear-gradient(0deg, ${accent} 0px, transparent 2px, transparent 30px), repeating-linear-gradient(90deg, ${accent} 0px, transparent 2px, transparent 30px)`,
-          }}
-        />
-
-        {/* Top accent line */}
-        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `linear-gradient(90deg, transparent 0%, ${accent} 50%, transparent 100%)` }} />
-
-        <div className={`${shellClass} relative z-10`}>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:gap-8">
-            {/* Stat 1 */}
-            <div className="group h-full">
-              <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm h-full flex flex-col justify-center transition-all hover:bg-white/10 hover:border-white/20">
-                <div className="flex items-center gap-2 mb-2 text-white/40 group-hover:text-white/60 transition-colors">
-                  <ClipboardList className="w-4 h-4" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Completed</span>
-                </div>
-                <div className="text-4xl lg:text-5xl font-black text-white leading-none tracking-tight">{reviewCount}<span className="text-2xl text-white/40">+</span></div>
-                <div className="text-xs font-medium text-white/60 mt-1">Projects Delivered</div>
-              </div>
-            </div>
-
-            {/* Stat 2 */}
-            <div className="group h-full">
-              <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm h-full flex flex-col justify-center transition-all hover:bg-white/10 hover:border-white/20">
-                <div className="flex items-center gap-2 mb-2 text-white/40 group-hover:text-white/60 transition-colors">
-                  <Calendar className="w-4 h-4" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Experience</span>
-                </div>
-                <div className="text-4xl lg:text-5xl font-black text-white leading-none tracking-tight">{years}<span className="text-2xl text-white/40">+</span></div>
-                <div className="text-xs font-medium text-white/60 mt-1">Years in Business</div>
-              </div>
-            </div>
-
-            {/* Stat 3 */}
-            <div className="group h-full">
-              <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm h-full flex flex-col justify-center transition-all hover:bg-white/10 hover:border-white/20">
-                <div className="flex items-center gap-2 mb-2 text-white/40 group-hover:text-white/60 transition-colors">
-                  <div className="flex gap-0.5">
-                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
-                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
-                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
-                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
-                    <Star className="w-3 h-3 text-[#FFA500] fill-[#FFA500]" />
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Rating</span>
-                </div>
-                <div className="text-4xl lg:text-5xl font-black text-white leading-none tracking-tight">{ratingText}</div>
-                <div className="text-xs font-medium text-white/60 mt-1">Google Reviews</div>
-              </div>
-            </div>
-
-            {/* Stat 4 */}
-            <div className="group h-full">
-              <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm h-full flex flex-col justify-center transition-all hover:bg-white/10 hover:border-white/20">
-                <div className="flex items-center gap-2 mb-2 text-white/40 group-hover:text-white/60 transition-colors">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Response</span>
-                </div>
-                <div className="text-4xl lg:text-5xl font-black text-white leading-none tracking-tight">2<span className="text-2xl text-white/40">hr</span></div>
-                <div className="text-xs font-medium text-white/60 mt-1">Avg. Response Time</div>
-              </div>
-            </div>
+              <Phone className="w-5 h-5" /> Call Now
+            </a>
+            <button
+              onClick={() => scrollToEstimate('Hero CTA')}
+              className="px-10 py-5 text-white font-serif font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-700 transition-colors rounded-sm shadow-xl min-w-[240px]"
+              style={{ backgroundColor: brandRed }}
+            >
+              Get A Free Estimate
+            </button>
           </div>
+          <p className="mt-6 text-sm opacity-80 font-medium">Fast Response • Same Day Quotes • 100% Satisfaction</p>
         </div>
-
-        {/* Bottom accent line */}
-        <div className="absolute bottom-0 left-0 right-0 h-1" style={{ background: `linear-gradient(90deg, transparent 0%, ${accent} 50%, transparent 100%)` }} />
       </section>
 
-      {/* Why Us - Bold dark section with parallax */}
-      <section id="why-us" className="relative scroll-mt-20 overflow-hidden" style={{ borderTop: `4px solid ${accent}`, borderBottom: `4px solid ${accent}` }}>
-        {/* Parallax background */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: 'url(/why-us-background.png)',
-            backgroundAttachment: 'fixed',
-            backgroundPosition: 'center 70%',
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat'
-          }}
-        />
-        {/* Strong dark overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.88) 100%)'
-          }}
-        />
-        <div className="relative py-16 z-10">
-          <div className={shellClass}>
-            <div className="grid gap-12 md:grid-cols-2 md:items-center">
-              <div>
-                <div className="inline-block px-4 py-2 rounded mb-6" style={{ backgroundColor: accent }}>
-                  <p className="text-xs font-black uppercase tracking-[0.2em] text-white">
-                    Why Homeowners Choose Us
-                  </p>
-                </div>
-                <h2 className="text-3xl font-black text-white md:text-4xl leading-tight">
-                  Why {config.city} Homeowners Trust Made New Pressure Washing
-                </h2>
-                <div className="mt-10 space-y-4">
-                  <div className="mt-10 space-y-6">
-                    {/* Benefit 1 */}
-                    <div className="flex items-start gap-4 p-5 rounded-lg border-l-4 transition-all hover:translate-x-2" style={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: accent }}>
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: `${accent}20` }}>
-                        <Leaf className="w-6 h-6" style={{ color: accent }} />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-black text-white mb-1">
-                          Plant & Pet Safe Promise
-                        </h4>
-                        <p className="text-sm font-medium text-gray-400 leading-relaxed">
-                          We treat your home like our own. We use careful pre-soaking and plant-protection protocols so your landscaping stays lush and your pets stay safe.
-                        </p>
-                      </div>
-                    </div>
+      {/* 
+        =============================================
+        TRUST BAR
+        =============================================
+      */}
+      {/* 
+        =============================================
+        TRUST BAR (Floating & Integrated)
+        =============================================
+      */}
+      <section className="relative z-20 -mt-16 px-4 mb-16">
+        <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-sm overflow-hidden">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-100">
+            {/* Item 1 */}
+            <div className="p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
+              <ShieldCheck className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300" />
+              <span className="font-bold text-[#0e2a47] text-sm uppercase tracking-widest">Licensed & Insured</span>
+              <span className="text-xs text-gray-500 mt-2 font-medium flex items-center gap-1">
+                <Check className="w-3 h-3 text-green-600" /> Fully Vetted
+              </span>
+            </div>
 
-                    {/* Benefit 2 */}
-                    <div className="flex items-start gap-4 p-5 rounded-lg border-l-4 transition-all hover:translate-x-2" style={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: accent }}>
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: `${accent}20` }}>
-                        <ShieldCheck className="w-6 h-6" style={{ color: accent }} />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-black text-white mb-1">
-                          HOA Compliance Guarantee
-                        </h4>
-                        <p className="text-sm font-medium text-gray-400 leading-relaxed">
-                          Got a nasty letter? We know the specific cleanliness standards for {config.city} HOAs. We'll get your siding and driveway passing inspection, guaranteed.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Benefit 3 */}
-                    <div className="flex items-start gap-4 p-5 rounded-lg border-l-4 transition-all hover:translate-x-2" style={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: accent }}>
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: `${accent}20` }}>
-                        <CloudRain className="w-6 h-6" style={{ color: accent }} />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-black text-white mb-1">
-                          7-Day Rain Guarantee
-                        </h4>
-                        <p className="text-sm font-medium text-gray-400 leading-relaxed">
-                          If a storm messes up your clean windows or driveway within 7 days of our service, we'll come back and touch it up for free. No questions asked.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            {/* Item 2 */}
+            <div className="p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
+              <Star className="w-10 h-10 text-yellow-400 fill-current mb-3 group-hover:scale-110 transition-transform duration-300" />
+              <div className="flex flex-col items-center">
+                <span className="font-bold text-[#0e2a47] text-sm uppercase tracking-widest">5-Star Rated</span>
+                <span className="text-xs text-gray-500 mt-2 font-medium flex items-center gap-1">
+                  <span className="font-bold text-blue-500">G</span> Verified Reviews
+                </span>
               </div>
-              <div
-                className="rounded-lg p-8 shadow-2xl relative overflow-hidden"
-                style={{ backgroundColor: '#0f172a', border: `2px solid ${accent}` }}
-              >
-                {/* Background accent */}
-                <div className="absolute top-0 right-0 p-4 opacity-5">
-                  <ShieldCheck className="w-32 h-32" style={{ color: accent }} />
-                </div>
+            </div>
 
-                <div className="relative z-10">
-                  <h3 className="text-xl font-black text-white mb-4">
-                    A Note from Blake
-                  </h3>
-                  <p className="text-base text-gray-300 mb-6 leading-relaxed">
-                    "I'm not just a business owner; I'm your neighbor here in {config.city}. When you call Made New, you don't get a franchise call center. You get me. I personally ensure every job is done right, every time."
-                  </p>
+            {/* Item 3 */}
+            <div className="p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
+              <Clock className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300" />
+              <span className="font-bold text-[#0e2a47] text-sm uppercase tracking-widest">Fast Estimates</span>
+              <span className="text-xs text-gray-500 mt-2 font-medium">Same Day Quotes</span>
+            </div>
 
-                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-800">
-                    <div>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Owner & Operator</p>
-                      <p className="text-3xl font-serif italic text-white" style={{ fontFamily: 'Georgia, serif' }}>Blake</p>
-                    </div>
-                    <a
-                      href={`tel:${cleanPhone}`}
-                      className="flex items-center gap-2 px-5 py-3 rounded-lg font-bold text-sm bg-white text-slate-900 hover:bg-gray-100 transition-colors"
-                    >
-                      <Phone className="w-4 h-4" />
-                      Call Me Direct
-                    </a>
-                  </div>
-                </div>
-              </div>
+            {/* Item 4 */}
+            <div className="p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
+              <ThumbsUp className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300" />
+              <span className="font-bold text-[#0e2a47] text-sm uppercase tracking-widest">Satisfaction</span>
+              <span className="text-xs text-gray-500 mt-2 font-medium">100% Guaranteed</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services - Industrial Card Grid */}
-      <section id="services" className="py-20 scroll-mt-20" style={{ backgroundColor: t.pageBg }}>
-        {/* Top border accent */}
-        <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, transparent 0%, ${accent} 50%, transparent 100%)` }} />
+      {/* 
+        =============================================
+        SERVICES OVERVIEW (DENSITY INTRO)
+        =============================================
+      */}
+      <section id="services" className="py-20 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #0e2a47 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
 
-        <div className={`${shellClass} mt-16`}>
-          <div className="mb-12 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}10` }}>
-              <Droplets className="h-4 w-4" style={{ color: accent }} />
-              <span className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accent }}>Services</span>
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-2">
+            "Make Dirty Things Look New Again"
+          </h2>
+          <div className="w-24 h-1 bg-red-600 mx-auto my-6"></div>
+
+          <p className="text-gray-600 mb-12 leading-relaxed text-lg max-w-3xl mx-auto">
+            We don't just "wash" your home. We use targeted cleaning methods to restore and protect your property. Knowing the difference between <strong>Pressure Washing</strong> and <strong>Soft Washing</strong> is crucial to avoiding damage.
+          </p>
+        </div>
+      </section>
+
+      {/* 
+        =============================================
+        FEATURE 1: SOFT WASHING (Safe)
+        =============================================
+      */}
+      <section className="py-0 bg-gray-50 border-t border-gray-100">
+        <div className="grid md:grid-cols-2">
+          <div className="h-[400px] md:h-auto bg-gray-300 relative">
+            <img src="/soft_wash_service.png" alt="Soft Washing Siding" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 bg-[#0e2a47] text-white py-2 px-6 font-bold uppercase tracking-widest text-sm">Safe Washing</div>
+          </div>
+          <div className="p-12 md:p-20 flex flex-col justify-center">
+            <div className="flex items-center gap-3 mb-4">
+              <Droplets className="w-8 h-8 text-[#0e2a47]" />
+              <h3 className="text-3xl font-serif font-bold text-[#0e2a47]">Soft Washing for Siding, Stucco, Brick, Roofs & Fences</h3>
             </div>
-            <h2 className="text-4xl font-black mb-3" style={{ color: t.textPrimary }}>
-              Professional Services in {config.city}, TX
-            </h2>
-            <p className="text-base font-medium max-w-2xl mx-auto" style={{ color: t.textMuted }}>
-              Expert house washing, roof cleaning, driveway pressure washing, and soft washing. Same-day estimates available.
+            <h4 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-6">Safe Cleaning for Your Home's Exterior</h4>
+            <p className="text-gray-600 leading-relaxed mb-6">
+              We never blast high pressure on your delicate siding or roof shingles. Instead, we use a specialized cleaning solution that kills algae, mildew, and bacteria at the root.
             </p>
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Safe for Stucco, Vinyl & Painted Wood</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Removes Black Streaks & Green Algae</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Longer Lasting Results</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => scrollToEstimate('Soft Washing')}
+              className="self-start px-8 py-3 text-white font-bold uppercase tracking-widest text-sm hover:bg-red-700 transition-colors rounded-sm"
+              style={{ backgroundColor: brandNavy }}
+            >
+              Get Soft Wash Quote
+            </button>
           </div>
-
-          <motion.div
-            variants={staggerSoft}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, amount: 0.3 }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {services.map((service, i) => {
-              const Icon =
-                service.icon === 'Zap' ? Zap :
-                  service.icon === 'Droplets' ? Droplets :
-                    service.icon === 'Home' ? Home :
-                      service.icon === 'Umbrella' ? Umbrella :
-                        service.icon === 'Layers' ? Layers :
-                          service.icon === 'PanelTop' ? PanelTop :
-                            service.icon === 'Trash2' ? Trash2 : Zap;
-
-              return (
-                <motion.div
-                  key={service.id}
-                  variants={fadeInSoft}
-                  className="group relative overflow-hidden rounded-xl transition-all hover:-translate-y-1 hover:shadow-xl border cursor-pointer"
-                  style={{ backgroundColor: t.cardBg, borderColor: t.border }}
-                  onClick={() => setLeadOpen(true)}
-                >
-                  {/* Hover border effect */}
-                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" style={{ color: accent }} />
-
-                  <div className="p-8">
-                    <div className="flex items-start justify-between mb-6">
-                      <div
-                        className="w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110"
-                        style={{ backgroundColor: i % 2 === 0 ? accent : accentRed }}
-                      >
-                        <Icon className="w-7 h-7" />
-                      </div>
-                      <div className="flex flex-col items-end">
-                        <span className="text-[10px] font-black uppercase tracking-widest opacity-40">0{i + 1}</span>
-                        <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" style={{ color: accent }} />
-                      </div>
-                    </div>
-
-                    <h3 className="text-xl font-black uppercase mb-3 leading-tight" style={{ color: t.textPrimary }}>
-                      {service.title}
-                    </h3>
-
-                    <p className="text-sm font-medium leading-relaxed mb-6" style={{ color: t.textSecondary }}>
-                      {service.description}
-                    </p>
-
-                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wide transition-colors group-hover:underline decoration-2 underline-offset-4" style={{ color: i % 2 === 0 ? accent : accentRed }}>
-                      <span>Get Quote</span>
-                    </div>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </motion.div>
         </div>
       </section>
 
-      {/* REWORKED SECTION: TECHNICAL SPECIFICATION STYLE */}
-      <section className="py-16 relative overflow-hidden" style={{ borderTop: `4px solid ${accent}`, backgroundColor: t.surfaceBg }}>
-        {/* Subtle grid pattern for tech feel */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `linear-gradient(${t.border} 1px, transparent 1px), linear-gradient(90deg, ${t.border} 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
-
-        <div className={shellClass + ' relative z-10'}>
-          <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded mb-4" style={{ backgroundColor: `${accent}15`, border: `1px solid ${accent}30` }}>
-                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: accent }} />
-                <p className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: accent }}>Technical Process</p>
-              </div>
-              <h2 className="text-3xl font-black md:text-4xl leading-tight" style={{ color: t.textPrimary }}>
-                The Right Method for Every Surface
-              </h2>
-              <p className="mt-4 text-lg font-medium" style={{ color: t.textSecondary }}>
-                We don't just blast everything. We use industry-standard protocols to ensure deep cleaning without damage.
-              </p>
+      {/* 
+        =============================================
+        FEATURE 2: PRESSURE WASHING (Power)
+        =============================================
+      */}
+      <section className="py-0 bg-white">
+        <div className="grid md:grid-cols-2">
+          <div className="p-12 md:p-20 flex flex-col justify-center order-2 md:order-1">
+            <div className="flex items-center gap-3 mb-4">
+              <Zap className="w-8 h-8 text-red-600" />
+              <h3 className="text-3xl font-serif font-bold text-[#0e2a47]">Concrete Pressure Washing (Driveways, Sidewalks, Patios)</h3>
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-10">
-            {/* CARD 1: PRESSURE WASHING */}
-            <motion.div
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="relative overflow-hidden rounded-lg border-2 group hover:border-transparent transition-colors duration-300"
-              style={{ borderColor: t.border }}
-            >
-              {/* Parallax Background */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: 'url(/pressure_washing.png)',
-                  backgroundAttachment: 'fixed',
-                  backgroundPosition: 'center',
-                  backgroundSize: '130%',
-                  backgroundRepeat: 'no-repeat'
-                }}
-              />
-              {/* Dark overlay for text readability */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.80) 100%)'
-                }}
-              />
-
-              {/* Hover Ring */}
-              <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 z-20" style={{ borderColor: accent }} />
-
-              <div className="p-8 relative z-10">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <h3 className="text-2xl font-black uppercase tracking-tight text-white">Pressure Washing</h3>
-                    <p className="text-xs font-bold uppercase tracking-wider mt-1 text-gray-400">Hard Surface Restoration</p>
-                  </div>
-                  <div className="w-12 h-12 rounded flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
-                    <Zap className="w-6 h-6" style={{ color: accent }} />
-                  </div>
-                </div>
-
-                {/* Tech Spec Line */}
-                <div className="flex items-center gap-3 mb-6 py-3 px-4 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-                  <div className="text-xs font-black uppercase text-gray-400">Spec:</div>
-                  <div className="text-sm font-bold text-white">3000-4000 PSI <span className="mx-2 opacity-30">|</span> High Flow</div>
-                </div>
-
-                <ul className="space-y-3 mb-8">
-                  {['Concrete Driveways', 'Stone Patios', 'Brick Walkways', 'Pool Decks'].map(item => (
-                    <li key={item} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 flex-shrink-0" style={{ color: accent }} />
-                      <span className="text-sm font-bold text-gray-200">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="text-sm leading-relaxed border-t pt-4 text-gray-300" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
-                  High-pressure mechanical cleaning to strip grime, oil, and embedded dirt from durable hardscapes.
-                </p>
-              </div>
-
-              {/* Watermark Icon */}
-              <Zap className="absolute -bottom-6 -right-6 w-48 h-48 opacity-[0.03] pointer-events-none" />
-            </motion.div>
-
-            {/* CARD 2: SOFT WASHING */}
-            <motion.div
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="relative overflow-hidden rounded-lg border-2 group hover:border-transparent transition-colors duration-300"
-              style={{ borderColor: t.border }}
-            >
-              {/* Parallax Background */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: 'url(/assets/softwash.jpg)',
-                  backgroundAttachment: 'fixed',
-                  backgroundPosition: 'center',
-                  backgroundSize: '100%',
-                  backgroundRepeat: 'no-repeat'
-                }}
-              />
-              {/* Lighter overlay for text readability */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.70) 100%)'
-                }}
-              />
-
-              {/* Hover Ring */}
-              <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 z-20" style={{ borderColor: accent }} />
-
-              <div className="p-8 relative z-10">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <h3 className="text-2xl font-black uppercase tracking-tight text-white">Soft Washing</h3>
-                    <p className="text-xs font-bold uppercase tracking-wider mt-1 text-gray-400">Delicate Exterior Sanitization</p>
-                  </div>
-                  <div className="w-12 h-12 rounded flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
-                    <Droplets className="w-6 h-6" style={{ color: accent }} />
-                  </div>
-                </div>
-
-                {/* Tech Spec Line */}
-                <div className="flex items-center gap-3 mb-6 py-3 px-4 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-                  <div className="text-xs font-black uppercase text-gray-400">Spec:</div>
-                  <div className="text-sm font-bold text-white">Low Pressure <span className="mx-2 opacity-30">|</span> Biodegradable Mix</div>
-                </div>
-
-                <ul className="space-y-3 mb-8">
-                  {['Roof Shingles', 'Vinyl Siding', 'Stucco & Painted Wood', 'Screen Enclosures'].map(item => (
-                    <li key={item} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 flex-shrink-0" style={{ color: accent }} />
-                      <span className="text-sm font-bold text-gray-200">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="text-sm leading-relaxed border-t pt-4 text-gray-300" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
-                  Chemical-based cleaning that kills algae and mold at the root without damaging paint or voiding roof warranties.
-                </p>
-              </div>
-
-              {/* Watermark Icon */}
-              <Droplets className="absolute -bottom-6 -right-6 w-48 h-48 opacity-[0.03] pointer-events-none" />
-            </motion.div>
-          </div>
-
-          {/* Bottom CTA Section - Guarantee + Action */}
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={fadeInUp}
-            className="relative mt-12"
-          >
-            <div
-              className="relative p-10 md:p-12 rounded-xl overflow-hidden border-2"
-              style={{
-                background: `linear-gradient(135deg, ${accent} 0%, ${accent}ee 100%)`,
-                borderColor: `${accent}`,
-              }}
-            >
-              {/* Subtle grid overlay */}
-              <div
-                className="absolute inset-0 opacity-[0.08]"
-                style={{
-                  backgroundImage: `repeating-linear-gradient(0deg, #ffffff 0px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #ffffff 0px, transparent 1px, transparent 40px)`,
-                }}
-              />
-
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-8">
-                {/* Icon + Content */}
-                <div className="flex items-start gap-6 flex-1">
-                  <div className="flex-shrink-0">
-                    <div className="w-16 h-16 rounded-lg flex items-center justify-center border-2 border-white/30" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
-                      <ShieldCheck className="w-8 h-8 text-white" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-3xl font-black text-white mb-3 leading-tight">
-                      100% Satisfaction Guarantee
-                    </h3>
-                    <p className="text-base font-semibold text-white/90 leading-relaxed max-w-2xl">
-                      We walk you through everything after completion. If you're not happy with our pressure washing or soft washing results in {config.city} or anywhere in Greater Houston, we'll make it right — no questions asked.
-                    </p>
-                  </div>
-                </div>
-
-                {/* CTA Button */}
-                <div className="flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setLeadOpen(true)}
-                    className="rounded-lg px-8 py-4 text-base font-black uppercase tracking-wide transition-all hover:scale-105 border-2"
-                    style={{ backgroundColor: '#ffffff', color: accent, borderColor: '#ffffff' }}
-                  >
-                    Get Free Estimate
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Recent Work Gallery - Before/After Sliders */}
-      <section id="work" className="py-20 scroll-mt-20" style={{ backgroundColor: t.surfaceBg }}>
-        {/* Top border accent */}
-        <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, transparent 0%, ${accent} 50%, transparent 100%)` }} />
-
-        <div className={`${shellClass} mt-16`}>
-          {/* Header */}
-          <div className="mb-16 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}10` }}>
-              <ArrowRight className="h-4 w-4" style={{ color: accent }} />
-              <span className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accent }}>Recent Work</span>
-            </div>
-            <h2 className="text-4xl font-black mb-3" style={{ color: t.textPrimary }}>
-              Real Results from {config.city}
-            </h2>
-            <p className="text-base font-medium max-w-2xl mx-auto" style={{ color: t.textMuted }}>
-              Drag the sliders to see the transformation. Before and after pressure washing results from homes across Tomball, Spring, Cypress, and The Woodlands.
+            <h4 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-6">High-Power Deep Cleaning for Hard Surfaces</h4>
+            <p className="text-gray-600 leading-relaxed mb-6">
+              For hard, durable surfaces, we bring the power. Our industrial-grade surface cleaners remove years of grime, oil, and embedded dirt from your concrete flatwork.
             </p>
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Deep Cleaning for Driveways & Sidewalks</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Pool Deck Restoration</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Removes Gum & Tough Oil Stains</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => scrollToEstimate('Pressure Washing')}
+              className="self-start px-8 py-3 text-white font-bold uppercase tracking-widest text-sm hover:opacity-90 transition-opacity rounded-sm"
+              style={{ backgroundColor: brandRed }}
+            >
+              Get Concrete Quote
+            </button>
+          </div>
+          <div className="h-[400px] md:h-auto bg-gray-300 relative order-1 md:order-2">
+            <img src="/pressure_wash_service.png" alt="Pressure Washing Concrete" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute bottom-0 right-0 bg-red-600 text-white py-2 px-6 font-bold uppercase tracking-widest text-sm">Deep Clean</div>
+          </div>
+        </div>
+      </section>
+
+      {/* 
+        =============================================
+        FEATURE 3: ROOF SOFT WASHING (Specialized)
+        =============================================
+      */}
+      <section className="py-0 bg-gray-50 border-t border-gray-100">
+        <div className="grid md:grid-cols-2">
+          <div className="h-[400px] md:h-auto bg-gray-300 relative">
+            <img src="https://placehold.co/800x600/0e2a47/white?text=Roof+Soft+Wash" alt="Roof Soft Washing Algae Removal" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 bg-[#0e2a47] text-white py-2 px-6 font-bold uppercase tracking-widest text-sm">Roof Care</div>
+          </div>
+          <div className="p-12 md:p-20 flex flex-col justify-center">
+            <div className="flex items-center gap-3 mb-4">
+              <CloudRain className="w-8 h-8 text-[#0e2a47]" />
+              <h3 className="text-3xl font-serif font-bold text-[#0e2a47]">Roof Soft Washing (Algae / Black Streak Removal)</h3>
+            </div>
+            <h4 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-6">Safe Low-Pressure Shingle Restoration</h4>
+            <p className="text-gray-600 leading-relaxed mb-6">
+              Those black streaks on your roof aren't just dirt—they're a form of algae called Gloeocapsa Magma that eats away at your shingles. Our soft wash process kills the growth without using high pressure.
+            </p>
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Instantly Removes Black Streaks</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Extends Shingle Life & Energy Efficiency</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">HOA Compliance Guaranteed</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => scrollToEstimate('Roof Cleaning')}
+              className="self-start px-8 py-3 text-white font-bold uppercase tracking-widest text-sm hover:opacity-90 transition-opacity rounded-sm"
+              style={{ backgroundColor: brandNavy }}
+            >
+              Get Roof Quote
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 
+        =============================================
+        GALLERY SECTION (Masonry + Lightbox)
+        =============================================
+      */}
+      <section id="gallery" className="py-24 bg-white relative">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6">
+          <div className="text-center mb-16">
+            <span className="text-red-600 font-bold uppercase tracking-widest text-sm mb-2 block">Recent Work</span>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#0e2a47]">Recent Exterior Cleaning Projects in Tomball</h2>
           </div>
 
-          {/* Before/After Sliders - 2-Column Grid */}
-          <div className="space-y-12">
-            {/* FEATURED PROJECT - Large Comparison Slider */}
-            <motion.div
-              variants={fadeInSoft}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="relative"
-            >
-              <div className="relative rounded-xl overflow-hidden shadow-2xl border-2" style={{ borderColor: accent }}>
-                <ComparisonSlider
-                  accent={accent}
-                  beforeLabel="Before"
-                  beforeHint="Driveway & Walkway"
-                  afterLabel="After"
-                  afterHint="Clean & Bright"
-                  beforeImage="/before-hero.jpg"
-                  afterImage="/after-hero.jpg"
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+            {galleryImages.map((img, i) => (
+              <div
+                key={i}
+                className={`relative break-inside-avoid rounded-sm overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 ${img.aspect}`}
+                onClick={() => openLightbox(i)}
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
-              </div>
-
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded flex items-center justify-center text-sm font-black text-white" style={{ backgroundColor: accent }}>
-                    1
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-black uppercase leading-tight" style={{ color: t.textPrimary }}>
-                      Driveway Restoration
-                    </h3>
-                    <p className="text-sm font-bold" style={{ color: t.textMuted }}>
-                      Oil stain removal and deep concrete cleaning
-                    </p>
-                  </div>
-                </div>
-                {/* Tech Badge */}
-                <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded border-2" style={{ borderColor: t.border, backgroundColor: t.surfaceBg }}>
-                  <Zap className="w-3 h-3" style={{ color: accent }} />
-                  <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: t.textSecondary }}>High Pressure</span>
+                <div className="absolute inset-0 bg-[#0e2a47]/0 group-hover:bg-[#0e2a47]/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <ZoomIn className="w-10 h-10 drop-shadow-md text-white" />
                 </div>
               </div>
-            </motion.div>
+            ))}
+          </div>
 
-            {/* GALLERY GRID - Static Before/Afters */}
-            <motion.div
-              variants={staggerSoft}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4"
-            >
-              {/* Job 2: Before */}
-              <motion.div variants={fadeInSoft} className="group relative aspect-square rounded-lg overflow-hidden border-2" style={{ borderColor: t.border }}>
-                <img src="/assets/before1.jpg" alt="Before Cleaning" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm px-3 py-1 rounded text-[10px] font-black uppercase text-white tracking-widest border border-white/20">
-                  Before
-                </div>
-              </motion.div>
-
-              {/* Job 2: After */}
-              <motion.div variants={fadeInSoft} className="group relative aspect-square rounded-lg overflow-hidden border-2" style={{ borderColor: accent }}>
-                <img src="/assets/after1.jpg" alt="After Cleaning" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute top-3 left-3 px-3 py-1 rounded text-[10px] font-black uppercase text-white tracking-widest shadow-lg" style={{ backgroundColor: accent }}>
-                  After
-                </div>
-                {/* Result Badge */}
-                <div className="absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center bg-white shadow-lg z-10">
-                  <Check className="w-5 h-5" style={{ color: accent }} />
-                </div>
-              </motion.div>
-
-              {/* Job 3: Before */}
-              <motion.div variants={fadeInSoft} className="group relative aspect-square rounded-lg overflow-hidden border-2" style={{ borderColor: t.border }}>
-                <img src="/assets/before2.jpg" alt="Before Cleaning" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-sm px-3 py-1 rounded text-[10px] font-black uppercase text-white tracking-widest border border-white/20">
-                  Before
-                </div>
-              </motion.div>
-
-              {/* Job 3: After */}
-              <motion.div variants={fadeInSoft} className="group relative aspect-square rounded-lg overflow-hidden border-2" style={{ borderColor: accent }}>
-                <img src="/assets/after2.jpg" alt="After Cleaning" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute top-3 left-3 px-3 py-1 rounded text-[10px] font-black uppercase text-white tracking-widest shadow-lg" style={{ backgroundColor: accent }}>
-                  After
-                </div>
-                {/* Result Badge */}
-                <div className="absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center bg-white shadow-lg z-10">
-                  <Check className="w-5 h-5" style={{ color: accent }} />
-                </div>
-              </motion.div>
-
-            </motion.div>
+          <div className="mt-12 text-center">
+            <p className="text-gray-500 text-sm font-medium mb-6">Want to see more? Follow us on social media.</p>
+            <button onClick={() => scrollToEstimate('Gallery Request')} className="inline-flex items-center gap-2 border-b-2 border-red-600 pb-1 text-[#0e2a47] font-bold uppercase tracking-widest hover:text-red-600 transition-colors">
+              View All Projects <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
+
+        {/* Lightbox Modal */}
+        {lightboxOpen && (
+          <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setLightboxOpen(false)}>
+            <button className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors" onClick={() => setLightboxOpen(false)}>
+              <X className="w-8 h-8" />
+            </button>
+
+            <button
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors hidden md:block"
+              onClick={prevImage}
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+
+            <div className="relative max-w-5xl max-h-[90vh] w-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={galleryImages[currentImageIndex].src}
+                alt={galleryImages[currentImageIndex].alt}
+                className="max-w-full max-h-[85vh] object-contain rounded-sm shadow-2xl"
+              />
+              <div className="absolute bottom-[-3rem] left-0 w-full text-center">
+                <span className="text-white/80 font-bold tracking-widest uppercase text-sm">
+                  {galleryImages[currentImageIndex].alt} ({currentImageIndex + 1} / {galleryImages.length})
+                </span>
+              </div>
+            </div>
+
+            <button
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors hidden md:block"
+              onClick={nextImage}
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+          </div>
+        )}
       </section>
 
-      {/* Reviews section - Redesigned Industrial Style */}
-      <section
-        id="proof"
-        className="relative py-20 scroll-mt-20 overflow-hidden"
-        style={{ backgroundColor: t.surfaceBg }}
-      >
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `radial-gradient(${accent} 1px, transparent 1px)`, backgroundSize: '32px 32px' }} />
+      {/* 
+        =============================================
+        REVIEWS (Dark Navy "Wall of Trust")
+        =============================================
+      */}
+      <section id="reviews" className="py-24 text-white relative overflow-hidden" style={{ backgroundColor: brandNavy }}>
+        {/* Background Texture */}
+        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
 
-        <div className={`${shellClass} relative z-10`}>
-          {/* Header */}
-          <div className="mb-12 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}10` }}>
-              <Star className="h-4 w-4" style={{ color: accent, fill: accent }} />
-              <span className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accent }}>Customer Reviews</span>
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div>
+              <span className="text-red-500 font-bold uppercase tracking-widest text-sm mb-2 block">Word on the Street</span>
+              <h2 className="text-3xl md:text-5xl font-serif font-bold">Top-Rated Tomball Pressure Washing Reviews.</h2>
             </div>
-            <h2 className="text-4xl font-black mb-3" style={{ color: t.textPrimary }}>
-              Trusted by {config.city}
-            </h2>
-            <p className="text-base font-medium max-w-2xl mx-auto" style={{ color: t.textMuted }}>
-              Real reviews from verified homeowners across Greater Houston
-            </p>
-          </div>
-
-          {/* Stats Bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            {/* Google Rating */}
-            <div className="p-6 rounded-xl border-2 text-center h-full flex flex-col justify-center items-center shadow-sm" style={{ borderColor: accent, backgroundColor: t.cardBg }}>
-              <div className="flex items-center gap-2 mb-3">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" className="h-6 w-6" />
-                <span className="text-lg font-black" style={{ color: t.textPrimary }}>Google</span>
+            <div className="flex items-center gap-2">
+              <div className="flex text-yellow-400">
+                {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-5 h-5 fill-current" />)}
               </div>
-              <div className="flex items-center justify-center gap-1 mb-2">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <Star key={i} className="h-5 w-5" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                ))}
-              </div>
-              <div className="text-3xl font-black mb-1" style={{ color: t.textPrimary }}>{ratingText}</div>
-              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>{reviewCount}+ 5-Star Reviews</div>
-            </div>
-
-            {/* Years */}
-            <div className="p-6 rounded-xl border-2 text-center h-full flex flex-col justify-center items-center shadow-sm" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
-              <div className="text-4xl font-black mb-2" style={{ color: accent }}>{years}+</div>
-              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>Years in Business</div>
-            </div>
-
-            {/* Licensed */}
-            <div className="p-6 rounded-xl border-2 text-center h-full flex flex-col justify-center items-center shadow-sm" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
-              <ShieldCheck className="h-10 w-10 mx-auto mb-2" style={{ color: accent }} />
-              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>Licensed & Insured</div>
-            </div>
-
-            {/* Availability */}
-            <div className="p-6 rounded-xl border-2 text-center h-full flex flex-col justify-center items-center shadow-sm" style={{ borderColor: t.border, backgroundColor: t.cardBg }}>
-              <Check className="h-10 w-10 mx-auto mb-2" style={{ color: accent }} />
-              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: t.textMuted }}>Fast Response</div>
+              <span className="font-bold text-lg">5.0/5.0</span>
+              <span className="text-gray-400 text-sm">(50+ Verified Reviews)</span>
             </div>
           </div>
 
-          {/* Testimonials Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {config.testimonials.map((testimonial, i) => (
-              <motion.div
-                key={testimonial.name}
-                variants={fadeInSoft}
-                initial="initial"
-                whileInView="animate"
-                viewport={{ once: true }}
-                className="relative p-8 rounded-xl border-2 hover:border-transparent transition-all group h-full flex flex-col shadow-sm hover:shadow-xl"
-                style={{ backgroundColor: t.cardBg, borderColor: t.border }}
-              >
-                {/* Hover effect */}
-                <div className="absolute inset-0 border-2 border-transparent group-hover:border-opacity-100 pointer-events-none transition-all duration-300 rounded-xl" style={{ borderColor: accent }} />
-
-                {/* Header: Stars & Google Icon */}
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Star key={star} className="h-4 w-4" style={{ color: '#FFA500', fill: '#FFA500' }} />
-                    ))}
-                  </div>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" className="h-5 w-5 opacity-50 grayscale group-hover:grayscale-0 transition-all" />
-                </div>
-
-                {/* Quote */}
-                <p className="text-base leading-relaxed font-medium mb-8 flex-grow italic" style={{ color: t.textSecondary }}>
-                  "{testimonial.quote}"
+          <div className="grid md:grid-cols-3 gap-8">
+            {config.testimonials.slice(0, 3).map((t, i) => (
+              <div key={i} className="bg-[#163b61] p-10 relative rounded-sm group hover:-translate-y-2 transition-transform duration-300">
+                <div className="absolute top-6 left-6 opacity-20 text-white font-serif text-6xl leading-none">"</div>
+                <p className="text-gray-200 mb-8 font-medium leading-relaxed relative z-10 pt-4">
+                  {t.quote}
                 </p>
 
-                {/* Author */}
-                <div className="flex items-center gap-4 pt-6 border-t font-sans" style={{ borderColor: t.borderLight }}>
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md"
-                    style={{ backgroundColor: accent }}
-                  >
-                    {testimonial.name.charAt(0)}
+                <div className="flex items-center gap-4 mt-auto border-t border-white/10 pt-6">
+                  <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold text-white text-sm">
+                    {t.name.charAt(0)}
                   </div>
                   <div>
-                    <div className="text-sm font-black" style={{ color: t.textPrimary }}>{testimonial.name}</div>
-                    <div className="flex items-center gap-1">
-                      <Check className="w-3 h-3 text-green-500" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-green-600">Verified Customer</span>
-                    </div>
+                    <span className="font-bold text-white uppercase text-xs tracking-widest block">{t.name}</span>
+                    <span className="text-gray-400 text-[10px] uppercase tracking-wider">Verified Customer</span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Process - Industrial Timeline */}
-      <section className="relative py-20 overflow-hidden" style={{ borderTop: `4px solid ${accent}`, borderBottom: `4px solid ${accent}` }}>
-        {/* Parallax background */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: 'url(/assets/softwash.jpg)',
-            backgroundAttachment: 'fixed',
-            backgroundPosition: 'center',
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat'
-          }}
-        />
-        {/* Strong dark overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.88) 100%)'
-          }}
-        />
+      {/* 
+        =============================================
+        ABOUT BLAKE (Trust Anchor)
+        =============================================
+      */}
+      <section id="about" className="py-24 bg-white relative">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6">
+          <div className="flex flex-col md:flex-row items-center gap-16">
+            <div className="w-full md:w-1/2 relative">
+              {/* Photo Card */}
+              <div className="aspect-[4/5] bg-gray-100 relative shadow-2xl rounded-sm overflow-hidden">
+                <img src="/blake_selfie.jpg" className="absolute inset-0 w-full h-full object-cover" alt="Blake Durand" />
 
-        <div className={`${shellClass} relative z-10 mt-8`}>
-          {/* Header */}
-          <div className="mb-12 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}10` }}>
-              <Zap className="h-4 w-4" style={{ color: accent }} />
-              <span className="text-xs font-black uppercase tracking-[0.15em] text-white">How it Works</span>
+                {/* Owner Badge */}
+                <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-4 border-l-4 border-red-600 shadow-sm">
+                  <span className="block font-serif font-bold text-[#0e2a47] text-xl">Blake Durand</span>
+                  <span className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Owner & Operator</span>
+                </div>
+              </div>
+
+              {/* Decorative Element */}
+              <div className="absolute -z-10 top-12 -left-12 w-full h-full border-2 border-[#0e2a47]/10 rounded-sm hidden md:block"></div>
             </div>
-            <h2 className="text-4xl font-black mb-3 text-white">
-              Simple 3-Step Process
-            </h2>
-            <p className="text-base font-medium max-w-2xl mx-auto text-gray-400">
-              Fast, transparent, and professional service from start to finish
-            </p>
-          </div>
 
-          <div className="relative max-w-5xl mx-auto">
-            {/* Connecting line with gradient */}
-            <div
-              className="absolute left-0 right-0 top-14 hidden h-1 md:block"
-              style={{ background: `linear-gradient(90deg, transparent 5%, ${accent} 30%, ${accent} 70%, transparent 95%)` }}
-            />
+            <div className="w-full md:w-1/2">
+              <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-red-50 rounded-full border border-red-100">
+                <UserCheck className="w-4 h-4 text-red-600" />
+                <span className="text-red-700 font-bold uppercase tracking-widest text-[10px]">Local Owner</span>
+              </div>
 
-            <div className="grid gap-8 md:grid-cols-3 relative z-10">
-              {steps.map((step, index) => (
-                <motion.div
-                  key={step.title}
-                  variants={fadeInSoft}
-                  initial="initial"
-                  whileInView="animate"
-                  viewport={{ once: true }}
-                  className="relative h-full"
-                >
-                  <div className="p-8 rounded-xl shadow-xl transition-all group h-full flex flex-col items-center text-center bg-white/95 backdrop-blur-sm hover:-translate-y-1 duration-300">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#0e2a47] mb-8 leading-[1.1]">
+                "I treat every home like it's my own."
+              </h2>
 
-                    {/* Step number */}
-                    <div
-                      className="relative z-10 mx-auto flex h-20 w-20 items-center justify-center rounded-2xl text-3xl font-black text-white shadow-lg mb-6 transform group-hover:scale-110 transition-transform duration-300"
-                      style={{ backgroundColor: accent }}
-                    >
-                      {index + 1}
-                    </div>
+              <div className="space-y-6 text-lg text-gray-600 leading-relaxed font-light mb-10">
+                <p>
+                  Hi, I'm <strong>Blake Durand</strong>. I founded Made New Pressure Washing to bring a higher level of service to Tomball.
+                </p>
+                <p>
+                  You know the drill with most contractors: they don't call back, they show up late, or they rush the job. <strong>That's not us.</strong>
+                </p>
+                <p>
+                  My promise is simple: We answer the phone. We show up on time. And we <strong>walk the job with you</strong> before we leave to ensure you are thrilled.
+                </p>
+              </div>
 
-                    <h3 className="text-xl font-black uppercase mb-3 text-slate-900">
-                      {step.title}
-                    </h3>
-
-                    <p className="text-sm font-medium leading-relaxed text-slate-600">
-                      {step.body}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2 p-4 bg-gray-50 border-l-2 border-red-600">
+                  <ShieldCheck className="w-6 h-6 text-[#0e2a47]" />
+                  <span className="font-bold text-[#0e2a47] text-sm">Fully Insured</span>
+                </div>
+                <div className="flex flex-col gap-2 p-4 bg-gray-50 border-l-2 border-red-600">
+                  <MapPin className="w-6 h-6 text-[#0e2a47]" />
+                  <span className="font-bold text-[#0e2a47] text-sm">Local to Tomball</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ - Industrial Style */}
-      <section id="faq" className="py-20 scroll-mt-20" style={{ borderTop: `4px solid ${accent}`, backgroundColor: t.surfaceBg }}>
-
-        <div className={`${shellClass} mt-16`}>
-          {/* Header */}
-          <div className="mb-12 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}10` }}>
-              <span className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accent }}>FAQ</span>
-            </div>
-            <h2 className="text-4xl font-black mb-3" style={{ color: t.textPrimary }}>
-              Common Questions About Pressure Washing
-            </h2>
-            <p className="text-base font-medium max-w-2xl mx-auto" style={{ color: t.textMuted }}>
-              Everything you need to know about our services in {config.city}, TX
-            </p>
+      {/* 
+        =============================================
+        PROCESS SECTION (Trust Builder)
+        =============================================
+      */}
+      <section id="process" className="py-24 bg-[#0e2a47] text-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 relative z-10">
+          <div className="text-center mb-16">
+            <span className="text-red-500 font-bold uppercase tracking-widest text-sm">Our Method</span>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold mt-3">The "Made New" Process</h2>
+            <p className="text-gray-300 mt-4 max-w-2xl mx-auto">We don't rush. We follow a strict cleaning protocol to ensure safety and superior results.</p>
           </div>
 
-          <div className="grid gap-10 md:grid-cols-[0.35fr_0.65fr] md:items-start">
-            <div className="md:sticky md:top-24">
-              <div className="p-6 rounded-lg border-2" style={{ backgroundColor: t.cardBg, borderColor: accent }}>
-                <h3 className="text-lg font-black uppercase mb-3" style={{ color: t.textPrimary }}>
-                  Still Have Questions?
-                </h3>
-                <p className="text-sm font-medium mb-4 leading-relaxed" style={{ color: t.textMuted }}>
-                  Call or text us directly for immediate answers about pressure washing services.
-                </p>
-                <a
-                  href={`tel:${cleanPhone}`}
-                  className="flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-black text-white transition-all hover:scale-105 border-2"
-                  style={{ backgroundColor: accent, borderColor: accent }}
-                >
-                  <Phone className="h-4 w-4" />
-                  {config.phone}
-                </a>
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="relative">
+              <div className="text-6xl font-black text-white/10 absolute -top-4 -left-4">01</div>
+              <h3 className="text-xl font-bold mb-3 relative z-10">Protect Property</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">We wet down all landscaping and cover delicate items before spraying a single drop.</p>
+            </div>
+            <div className="relative">
+              <div className="text-6xl font-black text-white/10 absolute -top-4 -left-4">02</div>
+              <h3 className="text-xl font-bold mb-3 relative z-10">Apply Solution</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">We apply our cleaning mix and <span className="font-bold text-white">let it dwell for 15-20 minutes</span>. This dwell time creates the deep clean.</p>
+            </div>
+            <div className="relative">
+              <div className="text-6xl font-black text-white/10 absolute -top-4 -left-4">03</div>
+              <h3 className="text-xl font-bold mb-3 relative z-10">Soft Rinse</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">We gently rinse away the dead algae and grime using low pressure, leaving zero damage behind.</p>
+            </div>
+            <div className="relative">
+              <div className="text-6xl font-black text-white/10 absolute -top-4 -left-4">04</div>
+              <h3 className="text-xl font-bold mb-3 relative z-10">Walkthrough</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">The job isn't done until we walk the property with you (or send photos) to confirm it looks 100% new.</p>
+            </div>
+          </div>
 
-                <div className="mt-6 pt-6 border-t-2 space-y-3" style={{ borderColor: t.border }}>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 flex-shrink-0" style={{ color: accent }} />
-                    <span className="text-xs font-bold" style={{ color: t.textMuted }}>Same-day estimates</span>
+          <div className="mt-16 text-center">
+            <button
+              onClick={() => scrollToEstimate('Process Step')}
+              className="px-10 py-4 bg-white text-[#0e2a47] font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors rounded-sm shadow-xl"
+            >
+              Schedule My Cleaning
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 
+        =============================================
+        OTHER SERVICES (Typography / Industrial List)
+        =============================================
+      */}
+      <section className="py-24 bg-white border-t border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 lg:px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#0e2a47] mb-4">Complete Exterior Restoration</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">From roof to curb, we have the specialized equipment to handle every inch of your property.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-center">
+            {[
+              "Pressure Washing",
+              "Soft Washing",
+              "Wood Fence Restoration",
+              "Trash Can Sanitization",
+              "Gutter Cleaning"
+            ].map((service, i) => (
+              <div
+                key={i}
+                onClick={() => scrollToEstimate(service)}
+                className="bg-[#0e2a47] p-8 flex flex-col items-center justify-center text-center cursor-pointer group hover:-translate-y-1 transition-transform duration-300 border-b-4 border-red-600 shadow-lg"
+              >
+                <h3 className="text-xl font-serif font-bold text-white group-hover:text-red-100 transition-colors uppercase tracking-wide px-4">
+                  {service}
+                </h3>
+                <div className="w-8 h-1 bg-white/20 mt-4 group-hover:w-16 transition-all duration-300"></div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <button onClick={() => scrollToEstimate('Commercial Inquiry')} className="inline-block border-b-2 border-red-600 text-[#0e2a47] font-bold uppercase tracking-widest text-sm hover:text-red-600 transition-colors pb-1">
+              Need Commercial Cleaning? Request an Estimate.
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 
+        =============================================
+        EMBEDDED ESTIMATE FORM (Clean Professional Style)
+        =============================================
+      */}
+      <section id="estimate-form" className="py-24 bg-gray-50/50 border-y border-gray-100 relative overflow-hidden">
+
+        <div className="max-w-5xl mx-auto px-4 lg:px-6">
+          <div className="bg-white rounded-sm shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden border border-gray-200">
+            <div className="grid md:grid-cols-5">
+
+              {/* Left Side: Solid Trust Context */}
+              <div className="md:col-span-2 bg-[#0e2a47] p-10 md:p-12 text-white flex flex-col justify-between relative">
+                <div className="relative z-10">
+                  <div className="w-10 h-1.5 bg-red-600 mb-8"></div>
+                  <h3 className="text-3xl font-serif font-bold mb-3 tracking-tight">Request Your <br />Professional Quote</h3>
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-12">Fully Insured • Family Owned • Tomball, TX</p>
+
+                  <div className="space-y-8">
+                    <div className="flex items-start gap-4">
+                      <CheckCircle2 className="w-6 h-6 text-red-600 mt-0.5" />
+                      <div>
+                        <span className="block text-sm font-bold uppercase tracking-wider text-white">Full Satisfaction Guarantee</span>
+                        <p className="text-[11px] text-gray-500 font-medium leading-relaxed mt-1">We don't leave until you're completely happy with the results.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <ShieldCheck className="w-6 h-6 text-red-600 mt-0.5" />
+                      <div>
+                        <span className="block text-sm font-bold uppercase tracking-wider text-white">Fully Insured & Bonded</span>
+                        <p className="text-[11px] text-gray-500 font-medium leading-relaxed mt-1">Your property is protected by our comprehensive liability policy.</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 flex-shrink-0" style={{ color: accent }} />
-                    <span className="text-xs font-bold" style={{ color: t.textMuted }}>Licensed & insured</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 flex-shrink-0" style={{ color: accent }} />
-                    <span className="text-xs font-bold" style={{ color: t.textMuted }}>100% satisfaction guaranteed</span>
+                </div>
+
+                <div className="mt-16 pt-8 border-t border-white/10">
+                  <div className="bg-white/5 rounded-sm p-6 border border-white/10 backdrop-blur-sm shadow-inner">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex text-yellow-500">
+                        {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Google Review</span>
+                    </div>
+                    <p className="text-xs text-gray-200 italic leading-relaxed mb-4">
+                      "Blake was incredible. Professional, on-time, and my driveway looks brand new. Best pressure washing company in Tomball by far."
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-black text-[10px]">BM</div>
+                      <div>
+                        <span className="block text-[10px] font-bold uppercase tracking-wide">Brendan M.</span>
+                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Local Resident</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-4">
-              {config.faqs.map((faq, i) => (
-                <details
-                  key={faq.q}
-                  className="group rounded-lg transition-all hover:shadow-md border-2"
-                  style={{ backgroundColor: t.cardBg, borderColor: t.border }}
-                  open={i === 0}
-                >
-                  <summary className="flex cursor-pointer list-none items-center justify-between p-5 text-base font-black transition-colors hover:opacity-80" style={{ color: t.textPrimary }}>
-                    {faq.q}
-                    <span
-                      className="ml-3 flex h-8 w-8 shrink-0 items-center justify-center rounded text-xl font-black transition-all duration-200 group-open:rotate-45 border-2"
-                      style={{ borderColor: accent, color: accent }}
-                    >
-                      +
-                    </span>
-                  </summary>
-                  <div className="px-5 pb-5 text-sm font-medium leading-relaxed border-t-2 pt-4" style={{ color: t.textSecondary, borderColor: t.border }}>
-                    {faq.a}
+              {/* Right Side: Clean Input Form */}
+              <div className="md:col-span-3 p-10 md:p-14 bg-white">
+                <form onSubmit={handleFormSubmit} className="space-y-6">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Service Requested</label>
+                    <div className="relative group">
+                      <select
+                        value={selectedService}
+                        onChange={(e) => setSelectedService(e.target.value)}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-[#0e2a47] focus:border-red-600 focus:bg-white focus:ring-0 outline-none appearance-none cursor-pointer transition-all uppercase text-xs tracking-widest shadow-sm"
+                      >
+                        <option>Pressure Washing</option>
+                        <option>Soft Washing</option>
+                        <option>Roof Cleaning</option>
+                        <option>Driveway / Concrete</option>
+                        <option>Gutter Cleaning</option>
+                        <option>General Inquiry</option>
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#0e2a47] transition-colors">
+                        <ArrowRight className="w-4 h-4 rotate-90" />
+                      </div>
+                    </div>
                   </div>
-                </details>
-              ))}
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Full Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={formName}
+                        onChange={(e) => setFormName(e.target.value)}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm"
+                        placeholder="John Doe"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Phone Number</label>
+                      <input
+                        type="tel"
+                        required
+                        value={formPhone}
+                        onChange={(e) => setFormPhone(e.target.value)}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm"
+                        placeholder="(555) 000-0000"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Service Address</label>
+                    <input
+                      type="text"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm"
+                      placeholder="Street, City, Zip"
+                    />
+                  </div>
+
+                  <div className="pt-6">
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full bg-red-600 text-white font-black uppercase tracking-[0.2em] py-5 rounded-sm hover:bg-red-700 transition-all shadow-xl hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-4 group"
+                    >
+                      <span className="relative z-10">
+                        {submitting ? 'Sending Request...' : 'Get My Free Quote'}
+                      </span>
+                      {!submitting && <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />}
+                    </button>
+
+                    <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest mt-8">
+                      Professional Grade Service • Reliable • Local
+                    </p>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
-      {/* CTA Section - Industrial Bold */}
-      < section id="home-cta" className="relative py-20 overflow-hidden" style={{ borderTop: `4px solid ${accent}`, backgroundColor: '#000000' }}>
-        {/* Grid pattern background */}
-        < div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `repeating-linear-gradient(0deg, ${accent} 0px, transparent 2px, transparent 30px), repeating-linear-gradient(90deg, ${accent} 0px, transparent 2px, transparent 30px)`,
-          }}
-        />
-
-        < div className={`${shellClass} relative z-10`}>
-          <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-            <div className="flex-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded mb-4 border-2" style={{ borderColor: accent, backgroundColor: `${accent}15` }}>
-                <Phone className="h-3.5 w-3.5" style={{ color: accent }} />
-                <span className="text-xs font-black uppercase tracking-[0.15em]" style={{ color: accent }}>Ready to Book?</span>
-              </div>
-
-              <h2 className="text-4xl font-black uppercase tracking-tight md:text-5xl text-white leading-tight">
-                Get Your Free<br />Estimate Today
-              </h2>
-
-              <div className="mt-6 space-y-2">
-                <div className="flex items-center gap-3">
-                  <Check className="h-5 w-5 flex-shrink-0" style={{ color: accent }} />
-                  <span className="text-base font-bold text-white">Same-day estimates available</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Check className="h-5 w-5 flex-shrink-0" style={{ color: accent }} />
-                  <span className="text-base font-bold text-white">No obligation • Fast response</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Check className="h-5 w-5 flex-shrink-0" style={{ color: accent }} />
-                  <span className="text-base font-bold text-white">Licensed & insured professionals</span>
-                </div>
-              </div>
-
-              <p className="mt-6 text-sm font-bold text-gray-400">
-                Serving Tomball, Spring, Cypress, Magnolia, The Woodlands & Greater Houston
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4 sm:flex-shrink-0">
-              <button
-                type="button"
-                className="rounded-lg px-8 py-5 text-base font-black shadow-2xl uppercase tracking-wide transition-all hover:scale-105 border-4"
-                style={{ backgroundColor: accent, borderColor: accent, color: '#ffffff' }}
-                onClick={() => setLeadOpen(true)}
-              >
-                → Get Free Estimate
-              </button>
-
-              <a
-                href={`tel:${cleanPhone}`}
-                className="inline-flex items-center justify-center gap-2 rounded-lg px-8 py-5 text-base font-black uppercase tracking-wide transition-all hover:bg-white/5 border-4"
-                style={{ borderColor: '#ffffff', color: '#ffffff' }}
-              >
-                <Phone className="h-5 w-5" />
-                {config.phone}
-              </a>
-
-              <p className="text-center text-xs font-bold text-gray-500">
-                We answer immediately
-              </p>
-            </div>
-          </div>
-        </div >
-      </section >
-
-      <footer className="py-10" style={{ backgroundColor: '#000000', color: '#ffffff' }}>
-
-        <div className={shellClass}>
-          <div className="grid gap-8 md:grid-cols-3 mb-8">
-            {/* Column 1 - Business Info */}
+      {/* 
+        =============================================
+        FOOTER - SEO RICH
+        =============================================
+      */}
+      <footer id="footer-main" className="bg-[#0e2a47] text-white pt-20 pb-10">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6">
+          <div className="grid md:grid-cols-3 gap-12 mb-16">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <img
-                  src="/logo-full.svg"
-                  alt={config.businessName}
-                  className="h-12 w-auto"
-                />
-              </div>
-              <p className="text-sm font-bold text-gray-400 leading-relaxed">
-                Professional pressure washing and soft washing services in {config.city}, TX
+              <img src="/logo-full.svg" alt="Made New Logo" className="h-16 mb-6 brightness-0 invert" />
+              <p className="text-gray-400 leading-relaxed mb-6">
+                Making dirty things look new again. Professional pressure washing and soft washing services for Tomball and Greater Houston.
               </p>
-            </div>
-
-            {/* Column 2 - Contact */}
-            <div>
-              <h3 className="text-xs font-black uppercase tracking-[0.15em] mb-4" style={{ color: accent }}>Contact</h3>
-              <div className="space-y-2">
-                <a
-                  href={`tel:${cleanPhone}`}
-                  className="block text-base font-black hover:opacity-80 transition-opacity"
-                  style={{ color: '#ffffff' }}
-                >
-                  {config.phone}
-                </a>
-                <p className="text-sm font-bold text-gray-400">
-                  Always open - Call or text anytime
-                </p>
-                <p className="text-sm font-bold text-gray-400">
-                  {config.serviceArea || config.city}
-                </p>
+              <div className="flex items-center gap-2 text-white font-bold">
+                <Phone className="w-5 h-5 text-red-500" /> {config.phone}
               </div>
             </div>
-
-            {/* Column 3 - Service Areas */}
             <div>
-              <h3 className="text-xs font-black uppercase tracking-[0.15em] mb-4" style={{ color: accent }}>Service Areas</h3>
-              <p className="text-sm font-bold text-gray-400 leading-relaxed">
-                Tomball, Spring, Cypress, Magnolia, The Woodlands & Greater Houston
+              <h4 className="text-lg font-bold mb-6 text-white uppercase tracking-widest">Service Menu</h4>
+              <ul className="space-y-3 text-gray-400 text-sm">
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Pressure Washing'); }} className="hover:text-white transition-colors">Residential Pressure Washing</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Soft Washing'); }} className="hover:text-white transition-colors">Soft Wash Roof Cleaning</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Driveway Cleaning'); }} className="hover:text-white transition-colors">Concrete Driveway Cleaning</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Commercial'); }} className="hover:text-white transition-colors">Commercial Building Washing</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Graffiti'); }} className="hover:text-white transition-colors">Graffiti Removal</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-bold mb-6 text-white uppercase tracking-widest">Service Areas</h4>
+              <p className="text-gray-400 text-sm leading-loose">
+                Proudly serving <strong>Tomball, TX</strong> and: <br />
+                Spring (77379, 77373) • Cypress (77429, 77433) • Magnolia (77354) • The Woodlands (77380) • Hufsmith • Rose Hill • Klein • and the entire Greater Houston Metroplex.
               </p>
             </div>
           </div>
 
-          {/* Bottom Bar */}
-          <div className="pt-6 border-t-2 flex flex-col md:flex-row md:items-center md:justify-between gap-3" style={{ borderColor: `${accent}30` }}>
-            <p className="text-xs font-bold text-gray-500">
-              © 2024 {config.businessName}. All rights reserved.
-            </p>
-            <div className="flex items-center gap-2">
-              <Check className="h-3 w-3" style={{ color: accent }} />
-              <span className="text-xs font-bold text-gray-500">Licensed & Insured</span>
-            </div>
+          <div className="border-t border-white/10 pt-10 text-center text-gray-500 text-xs font-medium uppercase tracking-widest">
+            &copy; {new Date().getFullYear()} {config.businessName}. All Rights Reserved. • Powered by The Contractor Scale.
           </div>
         </div>
       </footer>
-
-      <div className="fixed bottom-4 left-0 right-0 z-40 px-4 md:hidden">
-        <div
-          className="mx-auto flex max-w-md gap-3 rounded-lg p-3 shadow-2xl border-4"
-          style={{ backgroundColor: '#ffffff', borderColor: accent }}
-        >
-          <a
-            href={`tel:${cleanPhone}`}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-3 text-sm font-black uppercase tracking-wide transition-all hover:scale-105 border-2"
-            style={{ borderColor: accent, color: accent }}
-          >
-            <Phone className="h-4 w-4" />
-            Call
-          </a>
-          <button
-            type="button"
-            className="flex-1 rounded-lg px-3 py-3 text-sm font-black text-white uppercase tracking-wide shadow-lg transition-all hover:scale-105"
-            style={{ backgroundColor: accent }}
-            onClick={() => setLeadOpen(true)}
-          >
-            Quote
-          </button>
-        </div>
-      </div>
-
-      <LeadCaptureModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        accent={accent}
-        businessName={config.businessName}
-        serviceLabel={config.primaryService}
-        ctaLabel={config.ctaPrimary}
-        email={config.email}
-      />
-    </div >
+    </div>
   );
 }

@@ -83,7 +83,7 @@ export const defaultConfig: BusinessConfig = {
     {
       id: 'soft-washing',
       title: 'Soft Washing',
-      description: 'Safe low-pressure treatment for delicate surfaces like stucco and siding to kill algae and mold.',
+      description: 'Spray cleaning solution, let sit 15-20 mins, then rinse. Kills algae safely without damage.',
       icon: 'Droplets',
     },
     {
@@ -122,24 +122,20 @@ export const defaultConfig: BusinessConfig = {
   yearsInBusiness: 5,
   testimonials: [
     {
-      name: 'Lauren Sporrer',
-      quote: 'Kind, thorough and trustworthy. Highly recommend.',
+      name: 'Satisfied Customer',
+      quote: 'Incredibly detailed and thorough... walked me through everything afterward to confirm satisfaction.',
     },
     {
-      name: 'Nadeem Elnasr',
-      quote: 'Incredibly detailed and thorough. Walked me through everything afterward.',
+      name: 'Local Resident',
+      quote: 'Trustworthy, kind, and easy to work with. Great attention to detail.',
     },
     {
-      name: 'Dr Bee',
-      quote: 'Amazing job making my patio and backyard look like new. Great work ethic. Reasonable price.',
+      name: 'Homeowner',
+      quote: 'Patio and backyard look like new... great work ethic and reasonable price.',
     },
     {
-      name: 'Laurie Looper',
-      quote: 'Great communication and great attention to detail!',
-    },
-    {
-      name: 'Logan Baranowski',
-      quote: 'Professional, careful with our landscaping. Every inch done right.',
+      name: 'Tomball Neighbor',
+      quote: 'Careful with our landscaping... every inch done right. Results look brand new.',
     },
   ],
   faqs: [
