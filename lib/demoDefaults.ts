@@ -122,20 +122,32 @@ export const defaultConfig: BusinessConfig = {
   yearsInBusiness: 5,
   testimonials: [
     {
-      name: 'Satisfied Customer',
-      quote: 'Incredibly detailed and thorough... walked me through everything afterward to confirm satisfaction.',
+      name: 'Logan Baranowski',
+      quote: 'My home honestly looks brand new. We had green algae and mildew all over the windowsills... and after their soft washing service, it is completely gone. The difference is night and day.',
     },
     {
-      name: 'Local Resident',
-      quote: 'Trustworthy, kind, and easy to work with. Great attention to detail.',
+      name: 'Nadeem Elnasr',
+      quote: 'They were incredibly detailed and thorough from start to finish. Their attention to detail really stood out... Professional, punctual, and excellent quality work.',
     },
     {
-      name: 'Homeowner',
-      quote: 'Patio and backyard look like new... great work ethic and reasonable price.',
+      name: 'Dr Bee',
+      quote: 'Very excellent work. Mr. Durand did an amazing job making my entire patio and backyard look like new. Lots of attention to detail. Great work ethic. Reasonable price.',
     },
     {
-      name: 'Tomball Neighbor',
-      quote: 'Careful with our landscaping... every inch done right. Results look brand new.',
+      name: 'Lauren Sporrer',
+      quote: 'Blake did a wonderful job on our driveway and sidewalk and fence. He was thorough, easy to communicate with and did the job quickly with great results!',
+    },
+    {
+      name: 'Bethanie Calvi Reid',
+      quote: 'Blake came and did my back Patio, pool deck and outdoor chaise lounges... My entire area looks fantastic. Like new. He worked hard to go beyond. We are so happy! Very trustworthy.',
+    },
+    {
+      name: 'Mark Grinstead',
+      quote: 'These folks are very detail oriented and do great work. I highly recommend.',
+    },
+    {
+      name: 'Laurie Looper',
+      quote: 'Great communication and great attention to detail! Thank you for a job well done! Highly recommend!',
     },
   ],
   faqs: [

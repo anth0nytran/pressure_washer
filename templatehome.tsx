@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Phone, Menu, X, Check, Star, ShieldCheck, Clock, ThumbsUp, ArrowRight, MapPin, UserCheck, Droplets, Zap, CheckCircle2, CloudRain, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import { Phone, Menu, X, Check, Star, ShieldCheck, Clock, ThumbsUp, ArrowRight, MapPin, UserCheck, Droplets, Zap, CheckCircle2, CloudRain, ChevronLeft, ChevronRight, ZoomIn, Trash2, Layers, Hammer, Sparkles } from 'lucide-react';
 import type { BusinessConfig } from '@/lib/demoDefaults';
 
 export function TemplateHome({ config }: { config: BusinessConfig }) {
@@ -15,6 +15,9 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
   const [selectedService, setSelectedService] = useState('Pressure Washing');
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
+  const [formDetails, setFormDetails] = useState('');
+  const [formAddress, setFormAddress] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const scrollToEstimate = (service: string = 'General Inquiry') => {
@@ -26,10 +29,10 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
       'Gallery Request': 'General Inquiry',
       'Process Step': 'General Inquiry',
       'Commercial Inquiry': 'Commercial Cleaning',
-      'Wood Fence Restoration': 'Fence / Wood Cleaning',
-      'Trash Can Sanitization': 'Trash Can Cleaning',
+      'Wood Fence Restoration': 'Wood Fence Restoration',
+      'Trash Can Sanitization': 'Trash Can Sanitization',
       'Gutter Cleaning': 'Gutter Cleaning',
-      'Roof Cleaning': 'Roof Soft Wash',
+      'Roof Cleaning': 'Roof Cleaning',
       'Driveway Cleaning': 'Driveway / Concrete',
       'Graffiti': 'General Inquiry'
     };
@@ -46,13 +49,39 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // Simulate submission
-    setTimeout(() => {
-      alert('Estimate Request Sent! Blake will text you shortly.');
+
+    try {
+      const res = await fetch('/api/send-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formName,
+          phone: formPhone,
+          service: selectedService,
+          address: formAddress,
+          message: formDetails,
+          page: window.location.href,
+        }),
+      });
+
+      if (res.ok) {
+        setSubmitSuccess(true);
+        setFormName('');
+        setFormPhone('');
+        setFormDetails('');
+        setFormAddress('');
+        // Reset success message after 5 seconds to allow new submission if needed
+        setTimeout(() => setSubmitSuccess(false), 8000);
+      } else {
+        alert('Something went wrong. Please try again or call us directly.');
+      }
+    } catch (error) {
+      alert('Network error. Please try again.');
+    } finally {
       setSubmitting(false);
-      setFormName('');
-      setFormPhone('');
-    }, 800);
+    }
   };
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,12 +92,10 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
 
   // Mock Gallery Data (Placeholders with different aspect ratios)
   const galleryImages = [
-    { src: "https://placehold.co/600x400/0e2a47/white?text=Driveway+Clean", alt: "Concrete Driveway Pressure Washing in Tomball TX", aspect: "aspect-[3/2]" },
-    { src: "https://placehold.co/400x600/e60000/white?text=Siding+Soft+Wash", alt: "House Soft Washing Siding Cleaning in Spring TX", aspect: "aspect-[2/3]" },
-    { src: "https://placehold.co/600x600/0e2a47/white?text=Patio+Restoration", alt: "Brick Patio Concrete Pressure Washing in Cypress TX", aspect: "aspect-square" },
-    { src: "https://placehold.co/600x400/0e2a47/white?text=Roof+Washing", alt: "Roof Soft Wash Cleaning in The Woodlands TX", aspect: "aspect-[3/2]" },
-    { src: "https://placehold.co/400x500/e60000/white?text=Fence+Restoration", alt: "Wood Fence Cleaning Restoration in Magnolia TX", aspect: "aspect-[4/5]" },
-    { src: "https://placehold.co/600x400/0e2a47/white?text=Gutter+Brightening", alt: "Gutter Cleaning Service in Tomball Texas", aspect: "aspect-[3/2]" },
+    { src: "/recent_driveway.png", alt: "Concrete Driveway Pressure Washing in Tomball TX", aspect: "h-64 md:h-80" },
+    { src: "/recent_house_wash.png", alt: "House Soft Washing Siding Cleaning in Spring TX", aspect: "h-64 md:h-80" },
+    { src: "/recent_roof_cleaning.png", alt: "Roof Soft Wash Cleaning in The Woodlands TX", aspect: "h-64 md:h-80" },
+    { src: "/recent_fence_restoration.png", alt: "Wood Fence Cleaning Restoration in Magnolia TX", aspect: "h-64 md:h-80" },
   ];
 
   const openLightbox = (index: number) => {
@@ -131,8 +158,11 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
           <div className="flex justify-between items-center h-20 md:h-24">
             <div className="flex-shrink-0 relative z-50">
-              <a href="#" onClick={(e) => handleScrollTo(e, '#top')}>
-                <img className="h-16 md:h-20 w-auto drop-shadow-sm" src="/logo-full.svg" alt={config.businessName} />
+              <a href="#" onClick={(e) => handleScrollTo(e, '#top')} className="flex items-center gap-3 group">
+                <img className="h-14 md:h-16 w-auto drop-shadow-sm transition-transform group-hover:scale-105" src="/logo.svg" alt={config.businessName} />
+                <span className="text-[#0e2a47] font-serif font-bold uppercase tracking-widest text-[10px] md:text-sm leading-tight">
+                  Made New Pressure Washing LLC
+                </span>
               </a>
             </div>
 
@@ -256,35 +286,35 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-sm overflow-hidden">
           <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-100">
             {/* Item 1 */}
-            <div className="p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
-              <ShieldCheck className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300" />
+            <div className="p-4 md:p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
+              <ShieldCheck className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300 flex-shrink-0" />
               <span className="font-bold text-[#0e2a47] text-sm uppercase tracking-widest">Licensed & Insured</span>
-              <span className="text-xs text-gray-500 mt-2 font-medium flex items-center gap-1">
-                <Check className="w-3 h-3 text-green-600" /> Fully Vetted
+              <span className="text-xs text-gray-500 mt-2 font-medium flex items-center justify-center gap-1">
+                <Check className="w-3 h-3 text-green-600 flex-shrink-0" /> Fully Vetted
               </span>
             </div>
 
             {/* Item 2 */}
-            <div className="p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
-              <Star className="w-10 h-10 text-yellow-400 fill-current mb-3 group-hover:scale-110 transition-transform duration-300" />
+            <div className="p-4 md:p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
+              <Star className="w-10 h-10 text-yellow-400 fill-current mb-3 group-hover:scale-110 transition-transform duration-300 flex-shrink-0" />
               <div className="flex flex-col items-center">
                 <span className="font-bold text-[#0e2a47] text-sm uppercase tracking-widest">5-Star Rated</span>
-                <span className="text-xs text-gray-500 mt-2 font-medium flex items-center gap-1">
+                <span className="text-xs text-gray-500 mt-2 font-medium flex items-center justify-center gap-1">
                   <span className="font-bold text-blue-500">G</span> Verified Reviews
                 </span>
               </div>
             </div>
 
             {/* Item 3 */}
-            <div className="p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
-              <Clock className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300" />
+            <div className="p-4 md:p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
+              <Clock className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300 flex-shrink-0" />
               <span className="font-bold text-[#0e2a47] text-sm uppercase tracking-widest">Fast Estimates</span>
               <span className="text-xs text-gray-500 mt-2 font-medium">Same Day Quotes</span>
             </div>
 
             {/* Item 4 */}
-            <div className="p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
-              <ThumbsUp className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300" />
+            <div className="p-4 md:p-8 flex flex-col items-center justify-center text-center group hover:bg-gray-50 transition-colors">
+              <ThumbsUp className="w-10 h-10 text-[#0e2a47] mb-3 group-hover:scale-110 transition-transform duration-300 flex-shrink-0" />
               <span className="font-bold text-[#0e2a47] text-sm uppercase tracking-widest">Satisfaction</span>
               <span className="text-xs text-gray-500 mt-2 font-medium">100% Guaranteed</span>
             </div>
@@ -297,7 +327,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         SERVICES OVERVIEW (DENSITY INTRO)
         =============================================
       */}
-      <section id="services" className="py-20 bg-white relative overflow-hidden">
+      <section id="services" className="py-12 md:py-20 bg-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #0e2a47 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
 
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
@@ -325,8 +355,8 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
           </div>
           <div className="p-12 md:p-20 flex flex-col justify-center">
             <div className="flex items-center gap-3 mb-4">
-              <Droplets className="w-8 h-8 text-[#0e2a47]" />
-              <h3 className="text-3xl font-serif font-bold text-[#0e2a47]">Soft Washing for Siding, Stucco, Brick, Roofs & Fences</h3>
+              <Droplets className="w-8 h-8 text-[#0e2a47] flex-shrink-0" />
+              <h3 className="text-xl md:text-3xl font-serif font-bold text-[#0e2a47]">Soft Washing for Siding, Stucco, Brick, Roofs & Fences</h3>
             </div>
             <h4 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-6">Safe Cleaning for Your Home's Exterior</h4>
             <p className="text-gray-600 leading-relaxed mb-6">
@@ -334,15 +364,15 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             </p>
             <ul className="space-y-3 mb-8">
               <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <span className="text-gray-700 font-medium">Safe for Stucco, Vinyl & Painted Wood</span>
               </li>
               <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <span className="text-gray-700 font-medium">Removes Black Streaks & Green Algae</span>
               </li>
               <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <span className="text-gray-700 font-medium">Longer Lasting Results</span>
               </li>
             </ul>
@@ -366,8 +396,8 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         <div className="grid md:grid-cols-2">
           <div className="p-12 md:p-20 flex flex-col justify-center order-2 md:order-1">
             <div className="flex items-center gap-3 mb-4">
-              <Zap className="w-8 h-8 text-red-600" />
-              <h3 className="text-3xl font-serif font-bold text-[#0e2a47]">Concrete Pressure Washing (Driveways, Sidewalks, Patios)</h3>
+              <Zap className="w-8 h-8 text-red-600 flex-shrink-0" />
+              <h3 className="text-xl md:text-3xl font-serif font-bold text-[#0e2a47]">Concrete Pressure Washing (Driveways, Sidewalks, Patios)</h3>
             </div>
             <h4 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-6">High-Power Deep Cleaning for Hard Surfaces</h4>
             <p className="text-gray-600 leading-relaxed mb-6">
@@ -375,15 +405,15 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             </p>
             <ul className="space-y-3 mb-8">
               <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <span className="text-gray-700 font-medium">Deep Cleaning for Driveways & Sidewalks</span>
               </li>
               <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <span className="text-gray-700 font-medium">Pool Deck Restoration</span>
               </li>
               <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <span className="text-gray-700 font-medium">Removes Gum & Tough Oil Stains</span>
               </li>
             </ul>
@@ -402,6 +432,51 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         </div>
       </section>
 
+      {/* 
+        =============================================
+        FEATURE 3: EXPANSION JOINT SEALING
+        =============================================
+      */}
+      <section className="py-0 bg-gray-50 border-t border-gray-100">
+        <div className="grid md:grid-cols-2">
+          <div className="h-[400px] md:h-auto bg-gray-300 relative">
+            <img src="/expansion_joint_sealing.png" alt="Expansion Joint Sealing" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute bottom-0 left-0 bg-[#0e2a47] text-white py-2 px-6 font-bold uppercase tracking-widest text-sm">Protection</div>
+          </div>
+          <div className="p-12 md:p-20 flex flex-col justify-center">
+            <div className="flex items-center gap-3 mb-4">
+              <ShieldCheck className="w-8 h-8 text-[#0e2a47]" />
+              <h3 className="text-3xl font-serif font-bold text-[#0e2a47]">Concrete Expansion Joint Sealing</h3>
+            </div>
+            <h4 className="text-sm font-bold text-red-600 uppercase tracking-widest mb-6">Prevent Weeds, Cracks & Erosion</h4>
+            <p className="text-gray-600 leading-relaxed mb-6">
+              Protect your concrete investment by sealing the expansion joints. We replace old, rotting wood or empty gaps with high-quality sealant to prevent water infiltration and weed growth.
+            </p>
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Prevents Weed Growth Between Slabs</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Stops Water Erosion Under Concrete</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                <span className="text-gray-700 font-medium">Clean, Finished Look</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => scrollToEstimate('Expansion Joint Sealing')}
+              className="self-start px-8 py-3 text-white font-bold uppercase tracking-widest text-sm hover:bg-red-700 transition-colors rounded-sm"
+              style={{ backgroundColor: brandNavy }}
+            >
+              Get Joining Quote
+            </button>
+          </div>
+        </div>
+      </section>
+
 
       {/* 
         =============================================
@@ -415,11 +490,11 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#0e2a47]">Recent Exterior Cleaning Projects in Tomball</h2>
           </div>
 
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {galleryImages.map((img, i) => (
               <div
                 key={i}
-                className={`relative break-inside-avoid rounded-sm overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 ${img.aspect}`}
+                className={`relative rounded-sm overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 ${img.aspect}`}
                 onClick={() => openLightbox(i)}
               >
                 <img
@@ -436,9 +511,9 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
 
           <div className="mt-12 text-center">
             <p className="text-gray-500 text-sm font-medium mb-6">Want to see more? Follow us on social media.</p>
-            <button onClick={() => scrollToEstimate('Gallery Request')} className="inline-flex items-center gap-2 border-b-2 border-red-600 pb-1 text-[#0e2a47] font-bold uppercase tracking-widest hover:text-red-600 transition-colors">
+            <a href="https://www.facebook.com/people/Made-New-Pressure-Washing-LLC/61583470042267/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border-b-2 border-red-600 pb-1 text-[#0e2a47] font-bold uppercase tracking-widest hover:text-red-600 transition-colors">
               View All Projects <ArrowRight className="w-4 h-4" />
-            </button>
+            </a>
           </div>
         </div>
 
@@ -485,43 +560,60 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
         =============================================
       */}
       <section id="reviews" className="py-24 text-white relative overflow-hidden" style={{ backgroundColor: brandNavy }}>
-        {/* Background Texture */}
+        {/* Background Texture for depth */}
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
 
         <div className="max-w-7xl mx-auto px-4 lg:px-6 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div>
-              <span className="text-red-500 font-bold uppercase tracking-widest text-sm mb-2 block">Word on the Street</span>
-              <h2 className="text-3xl md:text-5xl font-serif font-bold">Top-Rated Tomball Pressure Washing Reviews.</h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex text-yellow-400">
-                {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-5 h-5 fill-current" />)}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full border border-white/10 mb-6">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.11c-.22-.66-.35-1.36-.35-2.11s.13-1.45.35-2.11V7.05H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.95l3.66-2.84z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.51 6.16-4.51z" fill="#EA4335" /></svg>
+              <div className="flex text-yellow-400 gap-1">
+                {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
               </div>
-              <span className="font-bold text-lg">5.0/5.0</span>
-              <span className="text-gray-400 text-sm">(50+ Verified Reviews)</span>
+              <span className="font-bold text-sm tracking-wide">5.0 Star Rating</span>
             </div>
+
+            <h2 className="text-3xl md:text-5xl font-serif font-bold mb-4">Trusted by Tomball Homeowners</h2>
+            <p className="text-gray-300 max-w-2xl mx-auto text-lg">We take pride in every single job. Our reputation is built on consistency, not volume.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {config.testimonials.slice(0, 3).map((t, i) => (
-              <div key={i} className="bg-[#163b61] p-10 relative rounded-sm group hover:-translate-y-2 transition-transform duration-300">
+          <div className="grid md:grid-cols-3 gap-8 items-stretch">
+            {config.testimonials.slice(0, 6).map((t, i) => (
+              <div key={i} className="bg-[#163b61] p-10 relative rounded-sm border border-white/5 shadow-xl group hover:-translate-y-2 transition-transform duration-300 h-full flex flex-col justify-between">
+                {/* Quote Icon */}
                 <div className="absolute top-6 left-6 opacity-20 text-white font-serif text-6xl leading-none">"</div>
-                <p className="text-gray-200 mb-8 font-medium leading-relaxed relative z-10 pt-4">
+
+                {/* Review Text */}
+                <p className="text-gray-100 mb-8 font-medium leading-relaxed relative z-10 pt-4 text-lg flex-grow">
                   {t.quote}
                 </p>
 
+                {/* Author Info */}
                 <div className="flex items-center gap-4 mt-auto border-t border-white/10 pt-6">
-                  <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold text-white text-sm">
+                  <div className="w-12 h-12 flex-shrink-0 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center font-bold text-white text-lg shadow-lg">
                     {t.name.charAt(0)}
                   </div>
                   <div>
-                    <span className="font-bold text-white uppercase text-xs tracking-widest block">{t.name}</span>
-                    <span className="text-gray-400 text-[10px] uppercase tracking-wider">Verified Customer</span>
+                    <span className="font-bold text-white uppercase text-sm tracking-widest block mb-1">{t.name}</span>
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-3 h-3 text-green-400" />
+                      <span className="text-gray-300 text-[10px] uppercase tracking-wider font-bold">Verified Customer</span>
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <a
+              href="https://share.google/285VT9x4dHTAEs9IW"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 text-white font-bold uppercase tracking-widest text-sm hover:text-red-400 transition-colors border-b-2 border-red-600 pb-1"
+            >
+              See Our Latest Reviews on Google <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </section>
@@ -648,21 +740,66 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-center">
             {[
-              "Pressure Washing",
-              "Soft Washing",
-              "Wood Fence Restoration",
-              "Trash Can Sanitization",
-              "Gutter Cleaning"
+              {
+                title: "Pressure Washing",
+                serviceId: "Pressure Washing",
+                icon: Zap,
+                features: ["Driveways & Sidewalks", "Oil Stain Removal", "Gum Removal"]
+              },
+              {
+                title: "Soft Washing",
+                serviceId: "Soft Washing",
+                icon: Droplets,
+                features: ["House Washing", "Roof Cleaning", "Safe for Siding"]
+              },
+              {
+                title: "Wood Fence Restoration",
+                serviceId: "Wood Fence Restoration",
+                icon: Hammer,
+                features: ["Gray Wood Removal", "Algae Treatment", "Brightening"]
+              },
+              {
+                title: "Trash Can Sanitization",
+                serviceId: "Trash Can Sanitization",
+                icon: Trash2,
+                features: ["Odor Elimination", "Bacteria Removal", "Eco-Friendly"]
+              },
+              {
+                title: "Gutter Cleaning",
+                serviceId: "Gutter Cleaning",
+                icon: CloudRain,
+                features: ["Debris Removal", "Downspout Flush", "Whitening"]
+              },
+              {
+                title: "Expansion Joint Sealing",
+                serviceId: "Expansion Joint Sealing",
+                icon: Layers,
+                features: ["Prevents Weeds", "Stops Erosion", "Self-Leveling Sealant"]
+              }
             ].map((service, i) => (
               <div
                 key={i}
-                onClick={() => scrollToEstimate(service)}
-                className="bg-[#0e2a47] p-8 flex flex-col items-center justify-center text-center cursor-pointer group hover:-translate-y-1 transition-transform duration-300 border-b-4 border-red-600 shadow-lg"
+                onClick={() => scrollToEstimate(service.serviceId)}
+                className="bg-[#0e2a47] p-8 border-b-4 border-red-600 shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer h-full flex flex-col items-center justify-center text-center"
               >
-                <h3 className="text-xl font-serif font-bold text-white group-hover:text-red-100 transition-colors uppercase tracking-wide px-4">
-                  {service}
+
+                {/* Strong Upper Title */}
+                <h3 className="text-xl font-serif font-bold text-white mb-4 uppercase tracking-widest">
+                  {service.title}
                 </h3>
-                <div className="w-8 h-1 bg-white/20 mt-4 group-hover:w-16 transition-all duration-300"></div>
+
+                {/* Subtle Divider */}
+                <div className="w-8 h-1 bg-white/10 mb-6 group-hover:bg-red-600 transition-colors"></div>
+
+                {/* Subtle Features (The "Things they get") */}
+                <div className="space-y-1">
+                  {service.features.map((f, idx) => (
+                    <p key={idx} className="text-gray-400 text-sm group-hover:text-white transition-colors">
+                      {f}
+                    </p>
+                  ))}
+                </div>
+
               </div>
             ))}
           </div>
@@ -673,14 +810,14 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             </button>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* 
         =============================================
         EMBEDDED ESTIMATE FORM (Clean Professional Style)
         =============================================
       */}
-      <section id="estimate-form" className="py-24 bg-gray-50/50 border-y border-gray-100 relative overflow-hidden">
+      < section id="estimate-form" className="py-24 bg-gray-50/50 border-y border-gray-100 relative overflow-hidden" >
 
         <div className="max-w-5xl mx-auto px-4 lg:px-6">
           <div className="bg-white rounded-sm shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden border border-gray-200">
@@ -734,127 +871,175 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
               </div>
 
               {/* Right Side: Clean Input Form */}
-              <div className="md:col-span-3 p-10 md:p-14 bg-white">
-                <form onSubmit={handleFormSubmit} className="space-y-6">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Service Requested</label>
-                    <div className="relative group">
-                      <select
-                        value={selectedService}
-                        onChange={(e) => setSelectedService(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-[#0e2a47] focus:border-red-600 focus:bg-white focus:ring-0 outline-none appearance-none cursor-pointer transition-all uppercase text-xs tracking-widest shadow-sm"
-                      >
-                        <option>Pressure Washing</option>
-                        <option>Soft Washing</option>
-                        <option>Roof Cleaning</option>
-                        <option>Driveway / Concrete</option>
-                        <option>Gutter Cleaning</option>
-                        <option>General Inquiry</option>
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#0e2a47] transition-colors">
-                        <ArrowRight className="w-4 h-4 rotate-90" />
+              <div className="md:col-span-3 p-10 md:p-14 bg-white relative">
+                {submitSuccess ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-12 bg-white animate-fade-in">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                      <Check className="w-10 h-10 text-green-600" />
+                    </div>
+                    <h3 className="text-2xl font-serif font-bold text-[#0e2a47] mb-4">Request Received!</h3>
+                    <p className="text-green-700 font-medium text-lg max-w-sm">
+                      Thank you! We will reach out ASAP please keep your phone nearby for a call.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleFormSubmit} className="space-y-6">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Service Requested <span className="text-red-600">*</span></label>
+                      <div className="relative group">
+                        <select
+                          value={selectedService}
+                          onChange={(e) => setSelectedService(e.target.value)}
+                          className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-[#0e2a47] focus:border-red-600 focus:bg-white focus:ring-0 outline-none appearance-none cursor-pointer transition-all uppercase text-xs tracking-widest shadow-sm"
+                          required
+                        >
+                          <option>Pressure Washing</option>
+                          <option>House Soft Washing</option>
+                          <option>Roof Cleaning</option>
+                          <option>Driveway / Concrete</option>
+                          <option>Wood Fence Restoration</option>
+                          <option>Trash Can Sanitization</option>
+                          <option>Gutter Cleaning</option>
+                          <option>Expansion Joint Sealing</option>
+                          <option>Commercial Cleaning</option>
+                          <option>General Inquiry</option>
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#0e2a47] transition-colors">
+                          <ArrowRight className="w-4 h-4 rotate-90" />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Full Name <span className="text-red-600">*</span></label>
+                        <input
+                          type="text"
+                          required
+                          value={formName}
+                          onChange={(e) => setFormName(e.target.value)}
+                          className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm"
+                          placeholder="John Doe"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Phone Number <span className="text-red-600">*</span></label>
+                        <input
+                          type="tel"
+                          required
+                          value={formPhone}
+                          onChange={(e) => setFormPhone(e.target.value)}
+                          className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm"
+                          placeholder="(555) 000-0000"
+                        />
+                      </div>
+                    </div>
+
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Full Name</label>
+                      <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Project Details (Optional)</label>
+                      <textarea
+                        value={formDetails}
+                        onChange={(e) => setFormDetails(e.target.value)}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm min-h-[100px]"
+                        placeholder="Tell us about your project..."
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Service Address <span className="text-red-600">*</span></label>
                       <input
                         type="text"
                         required
-                        value={formName}
-                        onChange={(e) => setFormName(e.target.value)}
+                        value={formAddress}
+                        onChange={(e) => setFormAddress(e.target.value)}
                         className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm"
-                        placeholder="John Doe"
+                        placeholder="Street, City, Zip"
                       />
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Phone Number</label>
-                      <input
-                        type="tel"
-                        required
-                        value={formPhone}
-                        onChange={(e) => setFormPhone(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm"
-                        placeholder="(555) 000-0000"
-                      />
+
+                    <div className="pt-6">
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full bg-red-600 text-white font-black uppercase tracking-[0.2em] py-5 rounded-sm hover:bg-red-700 transition-all shadow-xl hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-4 group"
+                      >
+                        <span className="relative z-10">
+                          {submitting ? 'Sending Request...' : 'Get My Free Quote'}
+                        </span>
+                        {!submitting && <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />}
+                      </button>
+
+                      <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest mt-8">
+                        Professional Grade Service • Reliable • Local
+                      </p>
                     </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-[#0e2a47] uppercase tracking-[0.1em] opacity-60">Service Address</label>
-                    <input
-                      type="text"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-sm px-4 py-3.5 font-bold text-gray-900 focus:border-red-600 focus:bg-white focus:ring-0 outline-none transition-all placeholder:text-gray-300 text-sm shadow-sm"
-                      placeholder="Street, City, Zip"
-                    />
-                  </div>
-
-                  <div className="pt-6">
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full bg-red-600 text-white font-black uppercase tracking-[0.2em] py-5 rounded-sm hover:bg-red-700 transition-all shadow-xl hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-4 group"
-                    >
-                      <span className="relative z-10">
-                        {submitting ? 'Sending Request...' : 'Get My Free Quote'}
-                      </span>
-                      {!submitting && <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />}
-                    </button>
-
-                    <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest mt-8">
-                      Professional Grade Service • Reliable • Local
-                    </p>
-                  </div>
-                </form>
+                  </form>
+                )}
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* 
         =============================================
         FOOTER - SEO RICH
         =============================================
       */}
-      <footer id="footer-main" className="bg-[#0e2a47] text-white pt-20 pb-10">
+      < footer id="footer-main" className="bg-[#0e2a47] text-white pt-24 pb-12" >
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <div className="grid md:grid-cols-3 gap-12 mb-16">
-            <div>
-              <img src="/logo-full.svg" alt="Made New Logo" className="h-16 mb-6 brightness-0 invert" />
-              <p className="text-gray-400 leading-relaxed mb-6">
-                Making dirty things look new again. Professional pressure washing and soft washing services for Tomball and Greater Houston.
+          <div className="grid md:grid-cols-4 gap-12 mb-20">
+            <div className="col-span-1 md:col-span-2">
+              <img src="/logo-full.svg" alt="Made New Logo" className="h-64 mb-8 brightness-0 invert opacity-90" />
+              <p className="text-slate-400 leading-relaxed mb-8 max-w-sm text-xs font-medium">
+                Top-rated residential & commercial exterior cleaning in Tomball & Greater Houston. Specializing in soft washing and pressure washing for long-lasting property protection.
               </p>
-              <div className="flex items-center gap-2 text-white font-bold">
-                <Phone className="w-5 h-5 text-red-500" /> {config.phone}
+              <div className="flex items-center gap-4 text-white font-bold text-sm tracking-wide">
+                <a href={`tel:${cleanPhone}`} className="flex items-center gap-2 hover:text-[#58738d] transition-colors">
+                  <Phone className="w-4 h-4 text-[#58738d]" /> {config.phone}
+                </a>
               </div>
             </div>
+
             <div>
-              <h4 className="text-lg font-bold mb-6 text-white uppercase tracking-widest">Service Menu</h4>
-              <ul className="space-y-3 text-gray-400 text-sm">
-                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Pressure Washing'); }} className="hover:text-white transition-colors">Residential Pressure Washing</a></li>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Soft Washing'); }} className="hover:text-white transition-colors">Soft Wash Roof Cleaning</a></li>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Driveway Cleaning'); }} className="hover:text-white transition-colors">Concrete Driveway Cleaning</a></li>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Commercial'); }} className="hover:text-white transition-colors">Commercial Building Washing</a></li>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Graffiti'); }} className="hover:text-white transition-colors">Graffiti Removal</a></li>
+              <h4 className="text-xs font-black text-[#58738d] uppercase tracking-[0.2em] mb-6">Services</h4>
+              <ul className="space-y-4 text-sm font-bold text-gray-300">
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Pressure Washing'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Pressure Washing</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Soft Washing'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Soft Washing</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('House Washing'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">House Washing</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Roof Cleaning'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Roof Cleaning</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Gutter Cleaning'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Gutter Cleaning</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Fence Restoration'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Fence Cleaning</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Trash Can Cleaning'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Trash Can Cleaning</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Expansion Joint Sealing'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Expansion Joint Sealing</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); scrollToEstimate('Commercial Services'); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Commercial Services</a></li>
               </ul>
             </div>
+
             <div>
-              <h4 className="text-lg font-bold mb-6 text-white uppercase tracking-widest">Service Areas</h4>
-              <p className="text-gray-400 text-sm leading-loose">
-                Proudly serving <strong>Tomball, TX</strong> and: <br />
-                Spring (77379, 77373) • Cypress (77429, 77433) • Magnolia (77354) • The Woodlands (77380) • Hufsmith • Rose Hill • Klein • and the entire Greater Houston Metroplex.
-              </p>
+              <h4 className="text-xs font-black text-[#58738d] uppercase tracking-[0.2em] mb-6">Service Area</h4>
+              <ul className="space-y-4 text-sm font-bold text-gray-300">
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Tomball</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">The Woodlands</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Spring</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Cypress</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Magnolia</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Klein</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Hufsmith</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Rose Hill</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); }} className="hover:text-white hover:translate-x-1 transition-all inline-block">Greater Houston</a></li>
+              </ul>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-10 text-center text-gray-500 text-xs font-medium uppercase tracking-widest">
-            &copy; {new Date().getFullYear()} {config.businessName}. All Rights Reserved. • Powered by The Contractor Scale.
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[#58738d]">
+            <span>&copy; {new Date().getFullYear()} {config.businessName}. All Rights Reserved.</span>
+            <span>
+              Website by <a href="https://quicklaunchweb.us" target="_blank" rel="noopener noreferrer" className="text-[#58738d] hover:text-white transition-colors">QuickLaunchWeb</a>
+            </span>
           </div>
         </div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   );
 }
