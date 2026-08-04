@@ -52,7 +52,7 @@ export const defaultConfig: BusinessConfig = {
   brandLine: 'Making dirty things look new again - spray the old away.',
   city: 'Greater Houston Area',
   serviceArea: 'Greater Houston area',
-  phone: '832-427-2439',
+  phone: '832-334-8014',
   primaryService: 'Pressure Washing and Soft Washing',
   ctaPrimary: 'Request a Quote',
   email: 'blake@madenewpressurewashing.com',
@@ -131,15 +131,15 @@ export const defaultConfig: BusinessConfig = {
     },
     {
       name: 'Dr Bee',
-      quote: 'Very excellent work. Mr. Durand did an amazing job making my entire patio and backyard look like new. Lots of attention to detail. Great work ethic. Reasonable price.',
+      quote: 'Very excellent work. They did an amazing job making my entire patio and backyard look like new. Lots of attention to detail. Great work ethic. Reasonable price.',
     },
     {
       name: 'Lauren Sporrer',
-      quote: 'Blake did a wonderful job on our driveway and sidewalk and fence. He was thorough, easy to communicate with and did the job quickly with great results!',
+      quote: 'They did a wonderful job on our driveway and sidewalk and fence. They were thorough, easy to communicate with and did the job quickly with great results!',
     },
     {
       name: 'Bethanie Calvi Reid',
-      quote: 'Blake came and did my back Patio, pool deck and outdoor chaise lounges... My entire area looks fantastic. Like new. He worked hard to go beyond. We are so happy! Very trustworthy.',
+      quote: 'They came and did my back Patio, pool deck and outdoor chaise lounges... My entire area looks fantastic. Like new. They worked hard to go beyond. We are so happy! Very trustworthy.',
     },
     {
       name: 'Mark Grinstead',
@@ -165,7 +165,7 @@ export const defaultConfig: BusinessConfig = {
     },
     {
       q: 'Do you offer same-day pressure washing service?',
-      a: 'Yes. We offer same-day estimates and often schedule within 24-48 hours depending on availability. It is simple to get on our schedule. Call or text 832-427-2439 for immediate scheduling. We serve Tomball, Spring, Cypress, Magnolia, The Woodlands, and throughout Greater Houston.',
+      a: 'Yes. We offer same-day estimates and often schedule within 24-48 hours depending on availability. It is simple to get on our schedule. Call or text 832-334-8014 for immediate scheduling. We serve Tomball, Spring, Cypress, Magnolia, The Woodlands, and throughout Greater Houston.',
     },
     {
       q: 'Will pressure washing damage my roof or siding?',

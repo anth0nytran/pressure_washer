@@ -116,7 +116,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
   const navLinks = [
     { label: 'Services', href: '#services' },
     { label: 'Process', href: '#process' },
-    { label: 'About Blake', href: '#about' },
+    { label: 'About Us', href: '#about' },
     { label: 'Reviews', href: '#reviews' },
     { label: 'Contact', href: '#estimate-form' },
   ];
@@ -620,7 +620,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
 
       {/* 
         =============================================
-        ABOUT BLAKE (Trust Anchor)
+        ABOUT THE OWNERS (Trust Anchor)
         =============================================
       */}
       <section id="about" className="py-24 bg-white relative">
@@ -629,12 +629,12 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             <div className="w-full md:w-1/2 relative">
               {/* Photo Card */}
               <div className="aspect-[4/5] bg-gray-100 relative shadow-2xl rounded-sm overflow-hidden">
-                <img src="/blake_selfie.jpg" className="absolute inset-0 w-full h-full object-cover" alt="Blake Durand" />
+                <img src="/blake_selfie.jpg" className="absolute inset-0 w-full h-full object-cover" alt="Owners and operators of Made New Pressure Washing" />
 
                 {/* Owner Badge */}
                 <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-4 border-l-4 border-red-600 shadow-sm">
-                  <span className="block font-serif font-bold text-[#0e2a47] text-xl">Blake Durand</span>
-                  <span className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Owner & Operator</span>
+                  <span className="block font-serif font-bold text-[#0e2a47] text-xl">Blake & Laura Durand</span>
+                  <span className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Owners & Operators</span>
                 </div>
               </div>
 
@@ -645,22 +645,22 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
             <div className="w-full md:w-1/2">
               <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-red-50 rounded-full border border-red-100">
                 <UserCheck className="w-4 h-4 text-red-600" />
-                <span className="text-red-700 font-bold uppercase tracking-widest text-[10px]">Local Owner</span>
+                <span className="text-red-700 font-bold uppercase tracking-widest text-[10px]">Locally Owned</span>
               </div>
 
               <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#0e2a47] mb-8 leading-[1.1]">
-                "I treat every home like it's my own."
+                "We treat every home like it's our own."
               </h2>
 
               <div className="space-y-6 text-lg text-gray-600 leading-relaxed font-light mb-10">
                 <p>
-                  Hi, I'm <strong>Blake Durand</strong>. I founded Made New Pressure Washing to bring a higher level of service to Tomball.
+                  We're the <strong>owners and operators</strong> of Made New Pressure Washing, and we founded it to bring a higher level of service to Tomball.
                 </p>
                 <p>
                   You know the drill with most contractors: they don't call back, they show up late, or they rush the job. <strong>That's not us.</strong>
                 </p>
                 <p>
-                  My promise is simple: We answer the phone. We show up on time. And we <strong>walk the job with you</strong> before we leave to ensure you are thrilled.
+                  Our promise is simple: We answer the phone. We show up on time. And we <strong>walk the job with you</strong> before we leave to ensure you are thrilled.
                 </p>
               </div>
 
@@ -857,7 +857,7 @@ export function TemplateHome({ config }: { config: BusinessConfig }) {
                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Google Review</span>
                     </div>
                     <p className="text-xs text-gray-200 italic leading-relaxed mb-4">
-                      "Blake was incredible. Professional, on-time, and my driveway looks brand new. Best pressure washing company in Tomball by far."
+                      "They were incredible. Professional, on-time, and my driveway looks brand new. Best pressure washing company in Tomball by far."
                     </p>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-black text-[10px]">BM</div>

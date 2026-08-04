@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Pressure Washing Tomball TX | House & Driveway Cleaning | Made New',
-  description: '#1 Rated Pressure Washing & Soft Washing in Tomball, TX. ⭐ 5-Star Google Reviews. Driveways, Houses, Roofs & Fences. Serving Spring, Cypress, Magnolia & The Woodlands. Free Same-Day Estimates. Call 832-427-2439',
+  description: '#1 Rated Pressure Washing & Soft Washing in Tomball, TX. ⭐ 5-Star Google Reviews. Driveways, Houses, Roofs & Fences. Serving Spring, Cypress, Magnolia & The Woodlands. Free Same-Day Estimates. Call 832-334-8014',
   keywords: 'pressure washing tomball tx, pressure washing near me, soft washing tomball, house washing spring tx, driveway cleaning cypress, roof cleaning magnolia, power washing the woodlands, exterior cleaning houston, commercial pressure washing, fence cleaning tomball, gutter cleaning houston, trash can cleaning',
   openGraph: {
     title: 'Made New Pressure Washing | Tomball, TX',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Pressure Washing Tomball TX | Made New',
-    description: '5-Star rated pressure washing & soft washing in Tomball and Greater Houston. Free same-day estimates. Call 832-427-2439',
+    description: '5-Star rated pressure washing & soft washing in Tomball and Greater Houston. Free same-day estimates. Call 832-334-8014',
   },
   robots: {
     index: true,
@@ -58,7 +58,7 @@ export default function RootLayout({
               image: 'https://www.madenewpressurewashing.com/opengraph-image.png',
               '@id': 'https://www.madenewpressurewashing.com',
               url: 'https://www.madenewpressurewashing.com',
-              telephone: '832-427-2439',
+              telephone: '832-334-8014',
               priceRange: '$$',
               address: {
                 '@type': 'PostalAddress',
@@ -145,7 +145,7 @@ export default function RootLayout({
                   name: 'How much does pressure washing cost in Tomball TX?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Pricing depends on size, surface, and buildup. Most house and exterior washes in Tomball and the Greater Houston area run $200-$600 depending on size and conditions. We provide free, no-obligation estimates by call or text at 832-427-2439.',
+                    text: 'Pricing depends on size, surface, and buildup. Most house and exterior washes in Tomball and the Greater Houston area run $200-$600 depending on size and conditions. We provide free, no-obligation estimates by call or text at 832-334-8014.',
                   },
                 },
                 {
@@ -169,7 +169,7 @@ export default function RootLayout({
                   name: 'Do you offer same-day pressure washing service in Tomball?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Yes! We offer same-day estimates and often schedule within 24-48 hours depending on availability. Call or text 832-427-2439 for immediate scheduling. We serve Tomball, Spring, Cypress, Magnolia, The Woodlands, and throughout Greater Houston.',
+                    text: 'Yes! We offer same-day estimates and often schedule within 24-48 hours depending on availability. Call or text 832-334-8014 for immediate scheduling. We serve Tomball, Spring, Cypress, Magnolia, The Woodlands, and throughout Greater Houston.',
                   },
                 },
                 {
